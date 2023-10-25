@@ -47,7 +47,6 @@ npm install
 ```bash
 npm run dev
 ```
-<<<<<<< HEAD
 El servidor de desarrollo del frontend estará en funcionamiento y podrás acceder a la aplicación en tu navegador en la dirección http://localhost:5173/ (o la dirección que se muestre en la terminal).
 =======
 El servidor de desarrollo del frontend estará en funcionamiento y podrás acceder a la aplicación en tu navegador en la dirección http://localhost:5173/ (o la dirección que se muestre en la terminal).
