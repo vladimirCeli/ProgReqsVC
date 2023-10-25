@@ -9,7 +9,9 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  Avatar,
 } from "@mui/material";
+import QuizIcon from "@mui/icons-material/Quiz";
 import { useNavigate, useParams } from "react-router-dom";
 import SelectQuestions from "../../components/Questionnaire/Select";
 import {
@@ -71,6 +73,7 @@ const Questionnaire = () => {
   };
 
   return (
+    <>
     <Grid
       container
       direction="column"
@@ -80,6 +83,19 @@ const Questionnaire = () => {
       <Grid item xs={3} md={6}>
         <Card sx={{ mt: 5 }}>
           <CardContent>
+            <Avatar 
+            sx={
+              {
+                mx: "auto",
+                mb: 2,
+                bgcolor: "#2E3B55",
+
+              }
+            }
+            >
+              <QuizIcon />
+            </Avatar>
+
             <Typography variant="h6" align="center">
               {editing ? "Editar cuestionario" : "Crear cuestionario"}
             </Typography>
@@ -98,17 +114,9 @@ const Questionnaire = () => {
               onChange={handleInputChange}
             />
 
-            <Typography variant="h6" align="center">Preguntas</Typography>
+            <Typography variant="h6" align="center">Categorías</Typography>
 
-            <Snackbar
-              open={snackbarOpen}
-              autoHideDuration={4000} // Adjust as needed
-              onClose={handleCloseSnackbar}
-            >
-              <Alert severity={color} onClose={handleCloseSnackbar}>
-                {message}
-              </Alert>
-            </Snackbar>
+            
 
             <SelectQuestions
               multiline
@@ -147,6 +155,16 @@ const Questionnaire = () => {
         </Card>
       </Grid>
     </Grid>
+    <Snackbar
+    open={snackbarOpen}
+    autoHideDuration={4000} // Adjust as needed
+    onClose={handleCloseSnackbar}
+  >
+    <Alert severity={color} onClose={handleCloseSnackbar}>
+      {message}
+    </Alert>
+  </Snackbar>
+  </>
   );
 };
 

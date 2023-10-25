@@ -234,6 +234,7 @@ function App() {
           <Route path="*" element={<NotFoundError />} />
         </Route>
       </Routes>
+     
     </>
   );
 }

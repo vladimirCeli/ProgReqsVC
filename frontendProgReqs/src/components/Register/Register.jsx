@@ -117,10 +117,17 @@ const Register = ({ onSuccessRegistration }) => {
           }}
           elevation={3}
         >
-          <Logo weight={250} height={150} />
+          <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          textAlign="center"
+        >
+          <Logo width={80} height={60} /> 
           <Typography style={{ padding: '15px' }} variant="h5" component="h1">
             Registro
           </Typography>
+          </Box>
           <Box component="form" onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
@@ -243,8 +250,9 @@ const Register = ({ onSuccessRegistration }) => {
                   />
                 )
               }
-              style={{ backgroundColor: '#2683a2' }}
-              sx={{ mt: 3, mb: 2 }}
+              sx={{
+                mt: 2,
+              }}
             >
               Registrarse
             </Button>

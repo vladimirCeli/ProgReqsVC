@@ -1,4 +1,4 @@
-import { Container, Button, Typography, Box } from "@mui/material";
+import { Container, Button, Typography, Box, Grid } from "@mui/material";
 import { motion } from "framer-motion";
 import { Logo } from "./Logo";
 import { Link } from "react-router-dom";
@@ -31,65 +31,46 @@ const Home = () => {
 
   return (
     <Container maxWidth="lg" style={{ marginTop: "20px" }}>
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <Box display="flex" alignItems="center" justifyContent="center">
-          <motion.div
-            variants={textVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <Box
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              textAlign="center"
-            >
-              <Logo weight={290} height={190} />
-              <Typography variant="h3" gutterBottom>
-                Bienvenido a Secure Dev
-              </Typography>
-              <Typography variant="h6" paragraph>
-                Potencie su desarrollo con productos seguros y basados en las
-                mejores prácticas.
-              </Typography>
-              <Typography variant="body1" paragraph>
-                Cree aplicaciones sólidas y seguras con facilidad. Únase a
-                Secure Dev hoy mismo.
-              </Typography>
-            </Box>
-          </motion.div>
-        </Box>
-        <Box my={3} display="flex" alignItems="center" justifyContent="center">
-          <motion.div variants={buttonVariants} animate="animate">
-            <Button
-              variant="outlined"
-              color="primary"
-              component={Link}
-                to="/login"
-                startIcon={<LockOpenIcon />}
-            >
-              Iniciar Sesión
-            </Button>
-          </motion.div>
-        </Box>
-        <Box my={2} display="flex" alignItems="center" justifyContent="center">
-          <motion.div variants={buttonVariants} animate="animate">
-            <Button
-              variant="contained"
-              color="primary"
-              component={Link}
-                to="/register"
-                startIcon={<PersonAddIcon />}
-              style={{ backgroundColor: "#2683a2", marginTop: "16px" }}
-            >
-              Registrarse
-            </Button>
-          </motion.div>
-        </Box>
+      <motion.div variants={containerVariants} initial="hidden" animate="visible">
+        <Grid container justifyContent="center" alignItems="center">
+          <Grid item xs={12} sm={6}>
+            <motion.div variants={textVariants} initial="hidden" animate="visible">
+              <Box display="flex" flexDirection="column" alignItems="center" textAlign="center">
+                <Logo width={80} height={60} /> {/* Logotipo adaptado */}
+                <Typography variant="h3" gutterBottom>
+                  Bienvenido a Secure Dev
+                </Typography>
+                <Typography variant="h6" paragraph>
+                  Potencie su desarrollo con productos seguros y basados en las mejores prácticas.
+                </Typography>
+                <Typography variant="body1" paragraph>
+                  Cree aplicaciones sólidas y seguras con facilidad. Únase a Secure Dev hoy mismo.
+                </Typography>
+              </Box>
+            </motion.div>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <motion.div variants={buttonVariants} animate="animate">
+              <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+                <Button variant="outlined" color="primary" component={Link} to="/login" startIcon={<LockOpenIcon />}>
+                  Iniciar Sesión
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  component={Link}
+                  to="/register"
+                  startIcon={<PersonAddIcon />}
+                  sx={{
+                    mt: 2,
+                  }}
+                >
+                  Registrarse
+                </Button>
+              </Box>
+            </motion.div>
+          </Grid>
+        </Grid>
       </motion.div>
     </Container>
   );

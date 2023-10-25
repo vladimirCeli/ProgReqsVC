@@ -9,19 +9,18 @@ import {
   Checkbox,
   Box,
   CssBaseline,
-  Grid,
   CircularProgress,
 } from "@mui/material";
 
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import useAuth from '../../hooks/useAuth'
-import useInput from '../../hooks/useInput'
-import useToggle from '../../hooks/useToggle'
-import { login } from '../../Services/Fetch'
+import useAuth from "../../hooks/useAuth";
+import useInput from "../../hooks/useInput";
+import useToggle from "../../hooks/useToggle";
+import { login } from "../../Services/Fetch";
 import { Logo } from "../Logo";
 
 const Login = () => {
-    const { setAuth } = useAuth();
+  const { setAuth } = useAuth();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -37,7 +36,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   const [errors, setErrors] = useState("");
-  const [check, toggleCheck] = useToggle('persist', false);
+  const [check, toggleCheck] = useToggle("persist", false);
 
   useEffect(() => {
     userRef.current.focus();
@@ -67,7 +66,7 @@ const Login = () => {
         const username = values?.username;
         const accessToken = data?.token;
         const roles = data?.rol_id;
-        
+
         setAuth({
           username,
           accessToken,
@@ -85,9 +84,12 @@ const Login = () => {
       console.log(error);
     }
   };
+
   return (
-    <>
-    <Container component="main" maxWidth="xs">
+    <Container
+      component="main"
+      maxWidth="xs"
+    >
       <CssBaseline />
       <Box
         elevation={3}
@@ -97,10 +99,20 @@ const Login = () => {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          gap: "16px",
         }}
       >
-        <Logo weight={250} height={150} />
-        <Typography style={{ padding: '15px' }}  variant="h5">Iniciar sesión</Typography>
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          textAlign="center"
+        >
+          <Logo width={80} height={60} /> 
+          <Typography style={{ padding: "15px" }} variant="h5">
+            Iniciar sesión
+          </Typography>
+        </Box>
         <form
           onSubmit={handleSubmit}
           style={{ width: "100%", marginTop: "16px" }}
@@ -128,11 +140,7 @@ const Login = () => {
           />
           <FormControlLabel
             control={
-              <Checkbox
-                id="persist"
-                checked={check}
-                onChange={toggleCheck}
-              />
+              <Checkbox id="persist" checked={check} onChange={toggleCheck} />
             }
             label="Mantener sesión iniciada"
           />
@@ -159,28 +167,27 @@ const Login = () => {
                 />
               )
             }
-            style={{ backgroundColor: "#2683a2", marginTop: "16px" }}
+            sx={{
+              mt: 2,
+            }}
           >
             Ingresar
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link to="/request-password-reset" variant="body2" color="textSecondary" >
+          
+            <Typography>
+              <Link to="/request-password-reset" variant="body2">
                 Recuperar Contraseña?
               </Link>
-            </Grid>
-            <Grid item>
-              <Link to="/register" variant="body2" color="textSecondary">
+            </Typography>
+            <Typography >
+              <Link to="/register" variant="body2">
                 Regístrate
               </Link>
-            </Grid>
-          </Grid>
+            </Typography>
         </form>
       </Box>
     </Container>
-    </>
   );
 };
-
 
 export default Login;
