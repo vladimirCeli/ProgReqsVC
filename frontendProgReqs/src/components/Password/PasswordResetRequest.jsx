@@ -1,19 +1,12 @@
 import { useState } from 'react';
 import { resetpass } from '../../Services/Fetch';
-import {
-  Container,
-  Typography,
-  TextField,
-  Button,
-  Snackbar,
-  Alert,
-} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import useToast from '../../hooks/useToast';
 
 const PasswordResetRequest = () => {
+  const {toast} = useToast();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [color, setColor] = useState(null)
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -30,57 +23,37 @@ const PasswordResetRequest = () => {
     });
     const data = await response.json();
     if (!response.ok) {
-      setMessage(data.message);
-      setOpenSnackbar(true);
-      setColor('error')
+      toast.error(data.message);
       return;
     } else {
-      setMessage(data.message);
-      setOpenSnackbar(true);
-      setColor('success')
+      navigate('/login', {replace: true});
     }
   };
 
   return (
-    <Container maxWidth="xs" style={{ marginTop: "20px" }}>
-      <Typography variant="h4" component="h2" align="center">
+    <div className="max-w-md mx-auto mt-20 rounded-2xl shadow-lg p-6 bg-gray-50 backdrop-filter backdrop-blur-lg bg-opacity-75">
+      <h1 className="text-2xl text-center font-bold mb-4">
         Solicitud de Restablecimiento de Contraseña
-      </Typography>
+      </h1>
       <form onSubmit={handleSubmit}>
-        <TextField
-          label="Correo Electrónico"
-          type="email"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={email}
-          onChange={handleEmailChange}
-          required
-        />
-        <Button
+        <div className="mb-4">
+          <input
+            className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring focus:border-indigo-500"
+            type="email"
+            placeholder="Ingrese su correo electrónico"
+            value={email}
+            onChange={handleEmailChange}
+            required
+          />
+        </div>
+        <button
           type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          size="large"
+          className="bg-indigo-700 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-xl transition duration-300 w-full"
         >
           Solicitar Restablecimiento de Contraseña
-        </Button>
+        </button>
       </form>
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={() => setOpenSnackbar(false)}
-      >
-        <Alert 
-          onClose={() => setOpenSnackbar(false)} 
-          severity={color}
-          sx={{ width: '100%' }}
-        >
-          {message}
-        </Alert>
-        </Snackbar>
-    </Container>
+    </div>
   );
 };
 

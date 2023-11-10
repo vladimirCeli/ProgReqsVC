@@ -2,8 +2,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 
-import Navbar from "./components/Navbar";
-import Home from "./components/Home";
+import Navbar from "./components/Navbar/Navbar";
+import Home from "./components/Home/Home";
 import Login from "./components/Login/Login";
 import Register from "./components/Register/Register";
 import Email from "./components/Email";
@@ -31,7 +31,7 @@ import GraphicsResults from "./components/GraphicsResults";
 import SelectReq from "./components/SelectReq";
 import NotFoundError from "./components/Error/NotFoundError";
 import Unauthorized from "./components/Error/Unauthorized";
-import { CssBaseline } from "@mui/material";
+import Container from "./components/ContainerEle";
 
 import useAuth from "./hooks/useAuth";
 import useLogout from "./hooks/useLogout";
@@ -119,8 +119,7 @@ function App() {
 
   return (
     <>
-      <CssBaseline />
-      {<Navbar onLogout={handleLogout} />}
+      { userLoggedIn && <Navbar onLogout={handleLogout} />}
       <Routes>
         
 
@@ -134,6 +133,7 @@ function App() {
               <Home />
             )
           } />
+         
           <Route path="/confirm/:confirmationToken" element={<Email />} />
 
           <Route
@@ -231,11 +231,12 @@ function App() {
             />
           </Route>
 
+          
           <Route path="*" element={<NotFoundError />} />
         </Route>
       </Routes>
      
-    </>
+      </>
   );
 }
 

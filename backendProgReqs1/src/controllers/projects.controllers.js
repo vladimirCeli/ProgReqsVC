@@ -4,13 +4,13 @@ const Requirement = require("../model/Requirements.model"); // Importa el modelo
 const getAllProjects = async (req, res, next) => {
   try {
     const projects = await Project.findAll();
-    res.json(projects);
+    res.json({ projects, messages: "Proyectos obtenidos correctamente" });
   } catch (error) {
     next(error);
   }
 };
 
-const getProject = async (req, res, next) => {
+const getProject = async (req, res) => {
   try {
     const { id } = req.params;
     const project = await Project.findByPk(id);
@@ -21,11 +21,11 @@ const getProject = async (req, res, next) => {
 
     res.status(200).json(project);
   } catch (error) {
-    next(error);
+    res.status(404).json({ message: "Error al obtener el proyecto" });
   }
 };
 
-const getProjectByPerson = async (req, res, next) => {
+const getProjectByPerson = async (req, res) => {
   try {
     const { id } = req.params;
     const projects = await Project.findAll({
@@ -33,16 +33,18 @@ const getProjectByPerson = async (req, res, next) => {
     });
 
     if (projects.length === 0) {
-      return res.status(404).json({ message: "No existen proyectos para esta persona" });
+      return res
+        .status(404)
+        .json({ message: "No existen proyectos para esta persona" });
     }
 
     res.json(projects);
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: "Error al obtener los proyectos" });
   }
 };
 
-const createProject = async (req, res, next) => {
+const createProject = async (req, res) => {
   const { name, description, person_id, requirements } = req.body;
   try {
     const project = await Project.create({
@@ -55,13 +57,13 @@ const createProject = async (req, res, next) => {
       await project.createRequirements(requirements);
     }
 
-    res.status(201).json(project);
+    res.status(200).json({ project, message: "Proyecto creado correctamente" });
   } catch (error) {
-    next(error);
+    res.status(500).json({ error: "Error al crear el proyecto" });
   }
 };
 
-const deleteProject = async (req, res, next) => {
+const deleteProject = async (req, res) => {
   const { id } = req.params;
   try {
     const project = await Project.findByPk(id);
@@ -76,13 +78,13 @@ const deleteProject = async (req, res, next) => {
     });
 
     await project.destroy();
-    res.json({ message: "Proyecto eliminado correctamente" });
+    res.status(200).json({ message: "Proyecto eliminado correctamente" });
   } catch (error) {
-    next(error);
+    res.status(404).json({ message: "Error al eliminar el proyecto" });
   }
 };
 
-const updateProject = async (req, res, next) => {
+const updateProject = async (req, res) => {
   const { id } = req.params;
   const { name, description, person_id, requirements } = req.body;
   try {
@@ -108,9 +110,9 @@ const updateProject = async (req, res, next) => {
       await project.createRequirements(requirements);
     }
 
-    res.json(project);
+    res.status(200).json({ project, message: "Proyecto actualizado correctamente" });
   } catch (error) {
-    next(error);
+    res.status(404).json({ message: "Error al actualizar el proyecto" });
   }
 };
 

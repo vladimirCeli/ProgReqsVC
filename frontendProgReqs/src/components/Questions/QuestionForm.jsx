@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { TextField, Typography, Button, Modal, Box } from "@mui/material";
 
 const QuestionForm = ({

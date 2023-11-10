@@ -1,0 +1,69 @@
+@keyframes vibration {
+    0% {
+      transform: translate(0, 0);
+    }
+    25% {
+      transform: translate(-2px, -2px);
+    }
+    50% {
+      transform: translate(2px, 2px);
+    }
+    75% {
+      transform: translate(-2px, -2px);
+    }
+    100% {
+      transform: translate(0, 0);
+    }
+  }
+  
+  @keyframes moveOutAndIn {
+    0%, 100% {
+      transform: translate(0, 0);
+    }
+    50% {
+      transform: translate(20px, 20px);
+    }
+  }
+  
+  .vibration-animation {
+    animation: vibration 3s infinite; /* La vibración dura 3 segundos y se repite infinitamente */
+    animation-timing-function: ease;
+  }
+  
+  /* Agrega una clase de animación a Logo para el movimiento de salida y regreso */
+  .s-animation {
+    animation: moveOutAndIn 3s infinite; /* El movimiento de salida y regreso dura 3 segundos y se repite infinitamente */
+    animation-timing-function: ease;
+  }
+  
+  @keyframes moveFromLeft {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .text-animation {
+    animation: moveFromLeft 2s ease-in-out;
+  }
+  
+  .logo-animation {
+    animation: moveFromLeft 2s ease-in-out; 
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .text-animation, .image-animation {
+    animation: fadeIn 2s ease; 
+  }

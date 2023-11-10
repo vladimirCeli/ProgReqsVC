@@ -46,6 +46,8 @@ export const questionnairesPublished = `${baseURl}/questionnaire/published`;
 
 export const questionnairesEditPublished = `${baseURl}/questionnaire/editpublished/`;
 
+export const questionnairesEditSteps = `${baseURl}/questionnaire/editsteps/`;
+
 export const questionApi = `${baseURl}/question`;
 
 export const questionCompleteApi = `${baseURl}/question/complete`;

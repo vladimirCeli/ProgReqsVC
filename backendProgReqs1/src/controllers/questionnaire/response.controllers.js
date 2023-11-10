@@ -5,11 +5,18 @@ const Response = require('../../model/questionnaire/response.model');
 const createResponse = async (req, res) => {
   try {
     const { project_id, name, questions, questionnaire_id } = req.body;
+
+    let name1 = name.trimLeft();
+
+    if (!name1) {
+      return res.status(400).json({ message: 'El nombre de la respuesta no puede estar vacío.' });
+    }
+
     const response = new Response({ project_id, name, questions, questionnaire_id });
     const savedResponse = await response.save();
-    res.status(201).json(savedResponse);
+    res.status(200).json({savedResponse, message: 'Respuesta guardada con éxito' });
   } catch (error) {
-    res.status(500).json({ error: 'Error al crear la respuesta' });
+    res.status(500).json({ message: 'Error al crear la respuesta' });
   }
 };
 
@@ -19,7 +26,7 @@ const getAllResponses = async (req, res) => {
     const responses = await Response.find();
     res.status(200).json(responses);
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener las respuestas' });
+    res.status(500).json({ message: 'Error al obtener las respuestas' });
   }
 };
 // Controlador para obtener una respuesta por su ID
@@ -39,15 +46,22 @@ const getResponseById = async (req, res) => {
 const updateResponseById = async (req, res) => {
   try {
     const { project_id, name, questions, questionnaire_id } = req.body;
+
+    let name1 = name.trimLeft();
+
+    if (!name1) {
+      return res.status(400).json({ message: 'El nombre de la respuesta no puede estar vacío.' });
+    }
+
     const response = await Response.findByIdAndUpdate(
       req.params.id,
       { project_id, name, questions, questionnaire_id },
       { new: true }
     );
     if (!response) {
-      return res.status(404).json({ error: 'Respuesta no encontrada' });
+      return res.status(404).json({ message: 'Respuesta no encontrada' });
     }
-    res.status(200).json(response);
+    res.status(200).json({response, message: 'Respuesta actualizada con éxito'});
   } catch (error) {
     res.status(500).json({ error: 'Error al actualizar la respuesta' });
   }
@@ -74,10 +88,10 @@ const deleteResponseById = async (req, res) => {
     }
     
     await Response.findByIdAndRemove(req.params.id);
-    res.status(200).json({ success: 'Respuesta eliminada con éxito' });
+    res.status(200).json({ message: 'Respuesta eliminada con éxito' });
     
   } catch (error) {
-    res.status(500).json({ error: 'Error al eliminar la respuesta' });
+    res.status(500).json({ message: 'Error al eliminar la respuesta' });
   }
 };
 

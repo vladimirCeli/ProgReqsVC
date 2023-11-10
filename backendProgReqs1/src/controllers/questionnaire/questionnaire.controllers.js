@@ -58,6 +58,44 @@ const updateQuestionnaireByIdInPublishedOrUnpublished = async (req, res) => {
   }
 };
 
+const updateQuestionnaireByIdSteps = async (req, res) => {
+  try {
+    const { steps } = req.body;
+
+    // Obtener el cuestionario actual por su ID
+    const currentQuestionnaire = await Questionnaire.findById(req.params.id);
+
+    if (!currentQuestionnaire) {
+      return res.status(404).json({ message: 'Cuestionario no encontrado.' });
+    }
+
+    // Si el nuevo paso es 1 o 2, verificamos que no exista otro cuestionario con ese paso
+    if (steps === 1 || steps === 2) {
+      const existingQuestionnaireWithStep = await Questionnaire.findOne({
+        _id: { $ne: req.params.id }, // Excluir el cuestionario actual
+        steps: steps,
+      });
+
+      if (existingQuestionnaireWithStep) {
+        return res.status(400).json({ message: `El paso ${steps} ya está siendo utilizado en otro cuestionario.` });
+      }
+    }
+
+    // Actualizar el cuestionario con los nuevos pasos
+    const updatedQuestionnaire = await Questionnaire.findByIdAndUpdate(
+      req.params.id,
+      { steps },
+      { new: true }
+    );
+
+    res.status(200).json(updatedQuestionnaire);
+  } catch (error) {
+    console.error('Error al actualizar el cuestionario por ID:', message);
+    res.status(500).json({ message: 'Hubo un error al actualizar el cuestionario.' });
+  }
+};
+
+
 const getQuestionnaireComplete = async (req, res) => {
   const categoryId = req.query.categoryId || null;
   const practiceId = req.query.practiceId || null;
@@ -188,6 +226,7 @@ module.exports = {
   getQuestionnaireById,
   getQuestionnaireComplete,
   updateQuestionnaireByIdInPublishedOrUnpublished,
+  updateQuestionnaireByIdSteps,
   getQuestionnairePublished,
   createQuestionnaire,
   updateQuestionnaireById,

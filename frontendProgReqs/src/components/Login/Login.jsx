@@ -1,21 +1,10 @@
 import { useRef, useState, useEffect } from "react";
 
-import {
-  Typography,
-  Container,
-  TextField,
-  Button,
-  FormControlLabel,
-  Checkbox,
-  Box,
-  CssBaseline,
-  CircularProgress,
-} from "@mui/material";
-
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useInput from "../../hooks/useInput";
 import useToggle from "../../hooks/useToggle";
+import { Eye, EyeOff } from "react-feather";
 import { login } from "../../Services/Fetch";
 import { Logo } from "../Logo";
 
@@ -34,6 +23,7 @@ const Login = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [errors, setErrors] = useState("");
   const [check, toggleCheck] = useToggle("persist", false);
@@ -86,107 +76,78 @@ const Login = () => {
   };
 
   return (
-    <Container
-      component="main"
-      maxWidth="xs"
-    >
-      <CssBaseline />
-      <Box
-        elevation={3}
-        sx={{
-          marginTop: "50px",
-          padding: "16px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "16px",
-        }}
-      >
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          textAlign="center"
-        >
-          <Logo width={80} height={60} /> 
-          <Typography style={{ padding: "15px" }} variant="h5">
-            Iniciar sesión
-          </Typography>
-        </Box>
-        <form
-          onSubmit={handleSubmit}
-          style={{ width: "100%", marginTop: "16px" }}
-        >
-          <TextField
-            label="Nombre de usuario"
-            name="username"
+    <section className=" flex items-center justify-center relative overflow-hidden md:p-32">
+    <div className="w-96 bg-gray-50 rounded-2xl shadow-lg max-w-md p-8 flex flex-col items-center space-y-6 bg-opacity-75">
+        <Link to="/">
+        <Logo width={80} height={60} className="" />
+        </Link>
+        <h2 className="font-bold text-2xl">Iniciar sesión</h2>
+        <p className="text-sm text-center">
+          Si eres miembro, inicia sesión fácilmente.
+        </p>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
+          <input
+            className="p-3 rounded-xl border w-full"
             type="text"
-            variant="outlined"
-            fullWidth
-            margin="normal"
+            name="username"
+            placeholder="Nombre de usuario"
             required
-            inputRef={userRef}
+            ref={userRef}
             {...handleChange}
           />
-          <TextField
-            label="Contraseña"
-            name="password"
-            type="password"
-            variant="outlined"
-            fullWidth
-            required
-            margin="normal"
-            {...handleChange}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox id="persist" checked={check} onChange={toggleCheck} />
-            }
-            label="Mantener sesión iniciada"
-          />
-          {errors && (
-            <Typography
-              variant="body2"
-              color="error"
-              style={{ marginTop: "8px" }}
+          <div className="relative">
+            <input
+              className="p-3 rounded-xl border w-full"
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Contraseña"
+              required
+              {...handleChange}
+            />
+            <button
+              type="button"
+              className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
+              onClick={() => setShowPassword(!showPassword)}
             >
-              {errors}
-            </Typography>
-          )}
-          <Button
+              {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              className="rounded-xl"
+              type="checkbox"
+              name="persist"
+              id="persist"
+              checked={check}
+              onChange={toggleCheck}
+            />
+            <label htmlFor="persist">Mantener sesión iniciada</label>
+          </div>
+          {errors && <p className="text-red-500">{errors}</p>}
+          <button
             type="submit"
-            fullWidth
-            variant="contained"
             disabled={loading}
-            startIcon={
-              loading && (
-                <CircularProgress
-                  size={16}
-                  color="inherit"
-                  style={{ marginRight: "8px" }}
-                />
-              )
-            }
-            sx={{
-              mt: 2,
-            }}
+            className="bg-indigo-700 hover:bg-indigo-600 text-white font-bold py-3 rounded-xl w-full transition duration-300 ease-in-out"
           >
-            Ingresar
-          </Button>
-          
-            <Typography>
-              <Link to="/request-password-reset" variant="body2">
-                Recuperar Contraseña?
-              </Link>
-            </Typography>
-            <Typography >
-              <Link to="/register" variant="body2">
-                Regístrate
-              </Link>
-            </Typography>
+            Iniciar sesión
+          </button>
         </form>
-      </Box>
-    </Container>
+        <Link
+          to="/request-password-reset"
+          className="text-sm border-b border-gray-400 py-4"
+        >
+          ¿Olvidó su contraseña?
+        </Link>
+        <div className="text-sm flex justify-center items-center ">
+          <p>¿No tiene cuenta?</p>
+          <Link to="/register" className="text-blue-500 ml-2">
+            <button className="py-2 px-4 bg-white border rounded-xl hover:scale-105 duration-300">
+              Registrarse
+            </button>
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 };
 

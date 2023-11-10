@@ -2,6 +2,7 @@ const {Router} = require('express')
 const {     getAllQuestionnaires,
     getQuestionnaireById,
     updateQuestionnaireByIdInPublishedOrUnpublished,
+    updateQuestionnaireByIdSteps,
     getQuestionnairePublished,
     getQuestionnaireComplete,
     createQuestionnaire,
@@ -19,6 +20,8 @@ router.get('/questionnaire/complete/:id', getQuestionnaireComplete )
 router.get('/questionnaire/published', getQuestionnairePublished )
 
 router.put('/questionnaire/editpublished/:id', updateQuestionnaireByIdInPublishedOrUnpublished)
+
+router.put('/questionnaire/editsteps/:id', updateQuestionnaireByIdSteps )
 
 router.post('/questionnaire', createQuestionnaire )
 

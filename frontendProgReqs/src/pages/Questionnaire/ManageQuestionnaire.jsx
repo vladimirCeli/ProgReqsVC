@@ -1,21 +1,20 @@
 import {
-  Box,
-  Container,
-} from "@mui/material";
-import {
   QuestionnairesSection,
 } from "../../Components/Questionnaire/QuestionnaireSecctions";
 import QuestionnairesList from "../../components/Questionnaire/questionnairesList";
 
 const QuestionnairesManager = () => {
   return (
-    <Container maxWidth="lg" style={{ marginTop: "20px" }}>
-      <Box display="flex" flexDirection="column" alignItems="center">
-        <h1>Gestión de Cuestionarios</h1>
-      </Box>
+    <>
+      <div className="container mx-auto px-4 text-center">
+        <h1 className="text-3xl font-bold text-black mb-4 text-center items-center">Gestión de Cuestionarios</h1>
+      </div>
       <QuestionnairesSection />
+      <div className="container mx-auto px-4 text-center">
+        <h1 className="text-3xl font-bold text-black mb-4 text-center items-center">Lista de cuestionarios</h1>
+      </div>
       <QuestionnairesList />
-    </Container>
+    </>
   );
 };
 

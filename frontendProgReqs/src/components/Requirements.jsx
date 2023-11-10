@@ -294,7 +294,7 @@ export default function Requirements() {
           console.log(
             "Selecciones guardadas exitosamente en la base de datos."
           );
-          
+
           loadTasks(params.id);
           closeModal();
           // Puedes redirigir al usuario o mostrar un mensaje de éxito aquí
@@ -316,7 +316,7 @@ export default function Requirements() {
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedSubcategories([]);
-    setSelectedSecurityRequirements([])
+    setSelectedSecurityRequirements([]);
   };
   const loadProject = async (id) => {
     try {
@@ -465,172 +465,124 @@ export default function Requirements() {
 
   return (
     <Container maxWidth="lg" style={{ marginTop: "20px" }}>
-      <Container maxWidth="sm">
-        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Requerimiento del Proyecto: {project.name}
-        </Typography>
-        <Box sx={{ width: "100%" }}>
-          <TableContainer
-            color="primary"
-            sx={{ mt: 4, marginBottom: 2, border: "1px solid" }}
-          >
-            <Table size="small">
-              <TableRow>
-                <TableCell
-                  color="primary"
-                  sx={{ border: "2px solid", paddingRight: 2 }}
-                >
-                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+      <h4 className="font-bold text-lg mb-4 text-center items-center">
+        Requerimiento del Proyecto: {project.name}
+      </h4>
+      <div className="container mx-auto bg-white p-4 rounded-lg shadow-lg text-center items-center">
+        <div className="container mx-auto bg-gray-50 p-4 rounded-lg shadow-lg">
+          <div className="max-w-sm mx-auto">
+            <div className="w-full border-2 border-gray-800 mb-2">
+              <table className="w-full">
+                <tr className="border-b-2 border-gray-800">
+                  <td className="p-2 border-r-2 border-gray-800 font-bold">
                     Identificación del Requerimiento
-                  </Typography>
-                </TableCell>
-                <TableCell
-                  color="primary"
-                  sx={{
-                    border: "2px solid",
-                    paddingLeft: 2,
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {requirements.ident_requirement_id}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell
-                  color="primary"
-                  sx={{ border: "2px solid", paddingRight: 2 }}
-                >
-                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  </td>
+                  <td className="p-2 break-words">
+                    {requirements.ident_requirement_id}
+                  </td>
+                </tr>
+                <tr className="border-b-2 border-gray-800">
+                  <td className="p-2 border-r-2 border-gray-800 font-bold">
                     Nombre del requerimiento
-                  </Typography>
-                </TableCell>
-                <TableCell
-                  color="primary"
-                  sx={{
-                    border: "2px solid",
-                    paddingLeft: 2,
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {requirements.name}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell
-                  color="primary"
-                  sx={{ border: "2px solid", paddingRight: 2 }}
-                >
-                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  </td>
+                  <td className="p-2 break-words">{requirements.name}</td>
+                </tr>
+                <tr className="border-b-2 border-gray-800">
+                  <td className="p-2 border-r-2 border-gray-800 font-bold">
                     Características
-                  </Typography>
-                </TableCell>
-                <TableCell
-                  color="primary"
-                  sx={{
-                    border: "2px solid",
-                    paddingLeft: 2,
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {requirements.characteristicsr}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell
-                  color="primary"
-                  sx={{ border: "2px solid", paddingRight: 2 }}
-                >
-                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  </td>
+                  <td className="p-2 break-words">
+                    {requirements.characteristicsr}
+                  </td>
+                </tr>
+                <tr className="border-b-2 border-gray-800">
+                  <td className="p-2 border-r-2 border-gray-800 font-bold">
                     Descripción del requerimiento
-                  </Typography>
-                </TableCell>
-                <TableCell
-                  color="primary"
-                  sx={{
-                    border: "2px solid",
-                    paddingLeft: 2,
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {requirements.description}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell
-                  color="primary"
-                  sx={{ border: "2px solid", paddingRight: 2 }}
-                >
-                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  </td>
+                  <td className="p-2 break-words">
+                    {requirements.description}
+                  </td>
+                </tr>
+                <tr className="border-b-2 border-gray-800">
+                  <td className="p-2 border-r-2 border-gray-800 font-bold">
                     Requerimiento no funcional
-                  </Typography>
-                </TableCell>
-                <TableCell
-                  color="primary"
-                  sx={{
-                    border: "2px solid",
-                    paddingLeft: 2,
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {requirements.req_no_funtional}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell
-                  color="primary"
-                  sx={{ border: "2px solid", paddingRight: 2 }}
-                >
-                  <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+                  </td>
+                  <td className="p-2 break-words">
+                    {requirements.req_no_funtional}
+                  </td>
+                </tr>
+                <tr className="border-b-2 border-gray-800">
+                  <td className="p-2 border-r-2 border-gray-800 font-bold">
                     Prioridad del Requerimiento
-                  </Typography>
-                </TableCell>
-                <TableCell
-                  color="primary"
-                  sx={{
-                    border: "2px solid",
-                    paddingLeft: 2,
-                    wordBreak: "break-word",
-                  }}
-                >
-                  {requirements.priority_req}
-                </TableCell>
-              </TableRow>
-            </Table>
-          </TableContainer>
-        </Box>
-      </Container>
-      <Box
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        sx={{ width: "100%" }}
-      >
-        <Button variant="contained" color="primary" onClick={openModal}>
-          Agregar Tareas de seguridad
-        </Button>
+                  </td>
+                  <td className="p-2 break-words">
+                    {requirements.priority_req}
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <button
+            onClick={openModal}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center items-center"
+          >
+            Agregar Tareas de seguridad
+          </button>
+        </div>
+      </div>
+      {/**modal */}
+      <div className="flex flex-col items-center w-full">
+        {isModalOpen && (
+          <div className="fixed z-10 inset-0 overflow-y-auto">
+            <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+              <div
+                className="fixed inset-0 transition-opacity"
+                aria-hidden="true"
+              >
+                <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+              </div>
+              <span
+                className="hidden sm:inline-block sm:align-middle sm:h-screen"
+                aria-hidden="true"
+              >
+                &#8203;
+              </span>
+              <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div className="px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <h3 className="text-lg font-medium leading-6 text-gray-900">
+                    Seleccione Seguridad
+                  </h3>
+                  <div className="mt-2">
+                    <h4 className="text-xl font-semibold">ASVS</h4>
+                    <p className="text-lg">
+                      Seleccione los requisitos de seguridad
+                    </p>
+                    {categoryAccordion()}
+                  </div>
+                </div>
+                <div className="px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                  <button
+                    onClick={saveSelections}
+                    className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm"
+                  >
+                    Guardar Selecciones
+                  </button>
+                  <button
+                    onClick={closeModal}
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
 
-        {/* Modal para seleccionar seguridad */}
-        <Dialog open={isModalOpen} onClose={closeModal}>
-          <DialogTitle>Seleccione Seguridad</DialogTitle>
-          <DialogContent>
-            <Typography variant="h5">ASVS</Typography>
-            <Typography variant="h6">
-              Seleccione los requisitos de seguridad
-            </Typography>
-            {categoryAccordion()}
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={saveSelections} color="primary">
-              Guardar Selecciones
-            </Button>
-            <Button onClick={closeModal} color="primary">
-              Cerrar
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </Box>
-      <Box display="flex" flexDirection="column" alignItems="center">
-        <h1>Lista de tareas</h1>
+      {/**fin modal */}
+      <Box display="flex" flexDirection="column" alignItems="center" className="mt-5" >
+        <h1 className="font-bold text-lg mb-4 text-center items-center">Lista de tareas</h1>
         <Typography variant="h6" sx={{ mb: 2 }}></Typography>
         <Grid container spacing={2}>
           {Array.isArray(tasks) && Object.keys(tasks).length > 0 ? (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-import { Box, Snackbar, Alert, Container } from "@mui/material";
+import useToast from "../../hooks/useToast";
+import ContainerEle from "../../components/ContainerEle";
 
 import {
   responseApiId,
@@ -13,12 +13,8 @@ import BoxResponses from "../../components/ListResponses/BoxResponses";
 import DeleteConfirmationModal from "../../components/Modal/DeleteConfirmationModal";
 
 const ListResponses = () => {
+  const { toast } = useToast();
   const { id1, id2 } = useParams();
-
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [color, setColor] = useState(null);
-  const [message, setMessage] = useState(null);
-
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [responseToDeleteId, setResponseToDeleteId] = useState(null);
 
@@ -34,15 +30,11 @@ const ListResponses = () => {
       });
       if (res.ok) {
         const data = await res.json();
-        setMessage(data.success);
-        setColor("success");
-        setSnackbarOpen(true);
+        toast.success(data.message);
         setDeleteModalOpen(false);
       } else {
         const data = await res.json();
-        setMessage(data.error);
-        setColor("error");
-        setSnackbarOpen(true);
+        toast.error(data.message);
         setDeleteModalOpen(false);
       }
       loadResponses();
@@ -71,25 +63,11 @@ const ListResponses = () => {
     loadQuestionnaire();
   }, []);
 
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  };
-
   return (
-    <Container maxWidth="lg" style={{ marginTop: "20px" }}>
-      <Box display="flex" flexDirection="column" alignItems="center">
-        <h1>Cuestionario: {questionnaire.name}</h1>
-      </Box>
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000} // Adjust as needed
-        onClose={handleCloseSnackbar}
-      >
-        <Alert severity={color} onClose={handleCloseSnackbar}>
-          {message}
-        </Alert>
-      </Snackbar>
+    <div className="container mx-auto px-4 text-center">
+      <h1 className="text-3xl font-bold text-gray-800 mb-4">
+        Cuestionario: {questionnaire.name}
+      </h1>
 
       <BoxResponses
         response={response}
@@ -104,7 +82,7 @@ const ListResponses = () => {
         onClose={() => setDeleteModalOpen(false)}
         onDelete={() => handleDelete(responseToDeleteId)}
       />
-    </Container>
+    </div>
   );
 };
 

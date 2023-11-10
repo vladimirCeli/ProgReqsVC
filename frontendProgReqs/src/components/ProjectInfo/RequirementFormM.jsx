@@ -1,129 +1,125 @@
-import {
-    Modal,
-    Box,
-    TextField,
-    Button,
-    CircularProgress,
-} from '@mui/material'
+const RequirementModal = ({
+  open,
+  handleClose,
+  newRequirement,
+  changeRequirements,
+  submitRequirements,
+  loading,
+  editingId,
+}) => {
+  const overlayClasses = open
+    ? "fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-40 transition-opacity duration-300"
+    : "fixed z-50 hidden";
 
-const RequirementModal = ({ 
-    open,
-    handleClose,
-    newRequirement,
-    changeRequirements,
-    submitRequirements,
-    loading,
-    editingId,
- }) => {
-    return (
-        <Modal
-            disablebackdropclick={true.toString()}
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="parent-modal-title"
-            aria-describedby="parent-modal-description"
+  const modalClasses = open
+    ? "fixed z-50 w-full max-w-md p-6 bg-gray-100 rounded shadow-lg transform transition duration-300 ease-out scale-100 opacity-100"
+    : "fixed z-50 hidden";
+
+  return (
+    <div className={overlayClasses}>
+      <div className={modalClasses}>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold mx-auto">
+            {editingId ? "Editar Requisito" : "Agregar Requisito"}
+          </h2>
+          <button
+            onClick={handleClose}
+            className="text-gray-500 hover:text-gray-700 focus:outline-none"
           >
-            <Box
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                width: 400,
-                bgcolor: "background.paper",
-                border: "2px solid #000",
-                boxShadow: 24,
-                pt: 2,
-                px: 4,
-                pb: 3,
-              }}
-            >
-              <h2 id="parent-modal-title">
-                {editingId ? "Editar Requisito" : "Agregar Requisito"}
-              </h2>
-              <p id="parent-modal-description">
-                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-              </p>
-              <form onSubmit={submitRequirements}>
-                <TextField
-                  id="ident_requirement_id"
-                  label="Identificación del requerimiento"
-                  name="ident_requirement_id"
-                  value={newRequirement.ident_requirement_id}
-                  onChange={changeRequirements}
-                  required
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                />
-                <TextField
-                  id="name"
-                  label="Nombre"
-                  name="name"
-                  value={newRequirement.name}
-                  onChange={changeRequirements}
-                  required
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                />
-                <TextField
-                  id="characteristicsr"
-                  label="Características"
-                  name="characteristicsr"
-                  value={newRequirement.characteristicsr}
-                  onChange={changeRequirements}
-                  required
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                />
-                <TextField
-                  id="description"
-                  label="Descripción"
-                  name="description"
-                  value={newRequirement.description}
-                  onChange={changeRequirements}
-                  required
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                />
-                <TextField
-                  id="req_no_funtional"
-                  label="Requerimiento no funcional"
-                  name="req_no_funtional"
-                  value={newRequirement.req_no_funtional}
-                  onChange={changeRequirements}
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                />
-                <TextField
-                  id="priority_req"
-                  label="Prioridad del requerimiento"
-                  name="priority_req"
-                  value={newRequirement.priority_req}
-                  onChange={changeRequirements}
-                  required
-                  fullWidth
-                  margin="normal"
-                  variant="outlined"
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  disabled={loading}
-                  startIcon={loading && <CircularProgress size={20} />}
-                  sx={{ mt: 3, mb: 2 }}
-                >
-                  {editingId ? "Editar" : "Agregar"}
-                </Button>
-              </form>
-            </Box>
-          </Modal>
-    )
-}
+            X
+          </button>
+        </div>
+        <p className="text-sm text-gray-600 mb-4">
+          Especificación de Requisitos de Software IEEE 830:
+        </p>
+        <p>
+          La especificación de requisitos de software sigue la plantilla IEEE
+          830 e incluye los requisitos funcionales y no funcionales del sistema.
+          Detalla las necesidades de los usuarios, las interfaces del sistema,
+          restricciones, dependencias y otros requisitos adicionales.
+        </p>
 
-export default RequirementModal
+        <form onSubmit={submitRequirements} className="space-y-2">
+          <input
+            id="ident_requirement_id"
+            type="text"
+            placeholder="Identificación del requerimiento"
+            name="ident_requirement_id"
+            value={newRequirement.ident_requirement_id}
+            onChange={changeRequirements}
+            required
+            className="w-full border border-gray-300 rounded p-3 mt-2"
+          />
+          <input
+            id="name"
+            type="text"
+            placeholder="Nombre"
+            name="name"
+            value={newRequirement.name}
+            onChange={changeRequirements}
+            required
+            className="w-full border border-gray-300 rounded p-3 mt-2"
+          />
+          <input
+            id="characteristicsr"
+            type="text"
+            placeholder="Características"
+            name="characteristicsr"
+            value={newRequirement.characteristicsr}
+            onChange={changeRequirements}
+            required
+            className="w-full border border-gray-300 rounded p-3 mt-2"
+          />
+          <input
+            id="description"
+            type="text"
+            placeholder="Descripción"
+            name="description"
+            value={newRequirement.description}
+            onChange={changeRequirements}
+            required
+            className="w-full border border-gray-300 rounded p-3 mt-2"
+          />
+          <input
+            id="req_no_funtional"
+            type="text"
+            placeholder="Requerimiento no funcional"
+            name="req_no_funtional"
+            value={newRequirement.req_no_funtional}
+            onChange={changeRequirements}
+            className="w-full border border-gray-300 rounded p-3 mt-2"
+          />
+          <input
+            id="priority_req"
+            type="text"
+            placeholder="Prioridad del requerimiento"
+            name="priority_req"
+            value={newRequirement.priority_req}
+            onChange={changeRequirements}
+            required
+            className="w-full border border-gray-300 rounded p-3 mt-2"
+          />
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full text-white py-3 rounded transition duration-300 ease-in-out flex items-center text-center justify-center mt-4 bg-blue-500 hover:bg-blue-700"
+            style={{ backgroundColor: "#2c3e50" }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#465669")}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = "#2c3e50")}
+          >
+            {editingId ? "Editar" : "Agregar"}
+          </button>
+          <button
+            type="button"
+            onClick={handleClose}
+            className="w-full border py-3 mt-2 rounded bg-gray-400 text-gray-700 hover:bg-gray-500 transition-colors duration-300"
+          >
+            Cancelar
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default RequirementModal;

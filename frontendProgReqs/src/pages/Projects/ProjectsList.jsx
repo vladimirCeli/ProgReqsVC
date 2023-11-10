@@ -1,65 +1,84 @@
 import { useEffect, useState } from "react";
-import { Typography, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import getPerson from "../../components/RequireIdentify";
 import { projectsbypersonid, projectsbyid } from "../../Services/Fetch";
 import CardProject from "../../components/Projects/CardProject";
+import Modal from "../../components/Modal/DeleteConfirmationModal";
+import useToast from "../../hooks/useToast";
 
 const ProjectsList = () => {
-  const [user, setUser] = useState(null);
+  const { toast } = useToast();
   const { auth } = useAuth();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const loadUser = async () => {
-      const person = await getPerson(auth.username);
-      if (person !== null) {
-        setUser(person);
-      } else {
-        setUser(null);
-      }
-    };
-    loadUser();
-  }, [auth.username]);
+  const [user, setUser] = useState(null);
+  const [projects, setProjects] = useState([]);
+  const [projectToDeleteId, setProjectToDeleteId] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
+  const handleDeleteConfirmation = (id) => {
+    setProjectToDeleteId(id);
+    setDeleteModalOpen(true);
+  };
 
   const handleDelete = async (id) => {
     try {
-      await fetch(projectsbyid + id, {
+      const response = await fetch(projectsbyid + id, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
       });
-      loadProjects(user);
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.success(data.message);
+        setDeleteModalOpen(false);
+        loadProjects(user);
+      } else {
+        toast.error(data.message);
+        setDeleteModalOpen(false);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const [projects, setProjects] = useState([]);
-
-  const navigate = useNavigate();
+  const loadUser = async () => {
+    const person = await getPerson(auth.username);
+    setUser(person ?? null);
+  };
 
   const loadProjects = async (id) => {
     const res = await fetch(projectsbypersonid + id);
     setProjects(await res.json());
   };
+
   useEffect(() => {
-    if (user !== null) {
+    loadUser();
+  }, [auth.username]);
+
+  useEffect(() => {
+    if (user) {
       loadProjects(user);
     }
   }, [user]);
   return (
-    <Container maxWidth="lg" style={{ marginTop: "20px" }}>
-      <h1>Lista de proyectos</h1>
-      <Typography variant="h6" sx={{ mb: 2 }}></Typography>
+  <>
       <CardProject
         projects={projects}
-        handleDelete={handleDelete}
+        handleDelete={handleDeleteConfirmation}
         navigate={navigate}
       />
-    </Container>
+
+      <Modal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onDelete={() => handleDelete(projectToDeleteId)}
+      />
+    </>
   );
 };
 

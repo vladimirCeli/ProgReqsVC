@@ -58,9 +58,9 @@ const createRequirement = async (req, res, next) => {
       priority_req,
       project_id,
     });
-    res.json(requirement);
+    res.status(200).json({requirement, message: "Requerimiento creado correctamente"});
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -80,9 +80,9 @@ const deleteRequirement = async (req, res, next) => {
     if (result === 0) {
       return res.status(404).json({ message: "No existe el requerimiento" });
     }
-    res.json({ message: "Requerimiento eliminado correctamente" });
+    res.status(200).json({ message: "Requerimiento eliminado correctamente" });
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -119,9 +119,9 @@ const updateRequirement = async (req, res, next) => {
     if (!updatedRequirement) {
       return res.status(404).json({ message: "No existe el requerimiento" });
     }
-    res.json({ message: "Requerimiento actualizado correctamente" });
+    res.status(200).json({ message: "Requerimiento actualizado correctamente" });
   } catch (error) {
-    next(error);
+    res.status(500).json({ message: error.message });
   }
 };
 

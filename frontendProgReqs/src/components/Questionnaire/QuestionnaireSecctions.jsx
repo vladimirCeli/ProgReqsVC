@@ -1,10 +1,5 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Button, Typography } from "@mui/material";
-import CategoryIcon from "@mui/icons-material/Category";
-import ContactSupportIcon from "@mui/icons-material/ContactSupport";
-import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
-import QuizIcon from "@mui/icons-material/Quiz";
+import { ClipboardDocumentCheckIcon, QuestionMarkCircleIcon, QueueListIcon, TagIcon } from "@heroicons/react/24/outline";
 
 const sections = [
   {
@@ -12,84 +7,64 @@ const sections = [
     title: "Preguntas",
     route: "/questions",
     color: "#ff9800",
-    icon: <QuestionAnswerIcon fontSize="large" />,
+    icon: <QuestionMarkCircleIcon
+    alt=""
+    className="h-20 m-6 text-gray-400 hover:text-gray-700"
+  />,
   },
   {
     id: 2,
     title: "Practicas",
     route: "/subsections",
     color: "#2196f3",
-    icon: <ContactSupportIcon fontSize="large" />,
+    icon: <QueueListIcon 
+    alt=""
+    className="h-20 m-6 text-gray-400 hover:text-gray-700"
+  />,
   },
   {
     id: 3,
     title: "Categorías",
     route: "/categories",
     color: "#f44336",
-    icon: <CategoryIcon fontSize="large" />,
+    icon: <TagIcon 
+    alt=""
+    className="h-20 m-6 text-gray-400 hover:text-gray-700"
+  />,
   },
   {
     id: 4,
     title: "Cuestionarios",
     route: "/questionnaire/new",
     color: "#9c27b0",
-    icon: <QuizIcon fontSize="large" />,
+    icon: <ClipboardDocumentCheckIcon
+    
+    alt=""
+    className="h-20 m-6 text-gray-400 hover:text-gray-700"
+  />,
   },
 ];
 
-const variants = {
-  hidden: { opacity: 0, y: -50 },
-  visible: { opacity: 1, y: 0 },
-};
-
 export const QuestionnairesSection = () => {
   return (
-    <div>
+    <div className="flex flex-wrap justify-center">
       {sections.map((section, index) => (
-        <motion.div
-          key={section.id}
-          initial="hidden"
-          animate="visible"
-          variants={variants}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          style={{ textDecoration: "none", marginBottom: "20px" }}
-        >
-          <Link to={section.route}>
-            <div
-              style={{
-                backgroundColor: section.color,
-                display: "flex",
-                alignItems: "center",
-                padding: "10px",
-                cursor: "pointer",
-                borderRadius: "4px",
-              }}
-            >
-              <Typography
-                variant="h6"
-                style={{
-                  marginLeft: "10px",
-                  width: "100%",
-                  color: "white",
-                }}
-              >
-                <Button
-                  fullWidth
-                  variant="contained"
-                  style={{
-                    backgroundColor: section.color,
-                    color: "primary",
-                  }}
-                >
-                  {section.icon}
-                  {section.title}
-                </Button>
-              </Typography>
-            </div>
+        <div key={section.id} className="flex flex-col bg-white rounded-lg shadow-md w-full m-6 overflow-hidden sm:w-52">
+          {section.icon}
+
+          <h2 className="text-gray-400 text-center px-2 pb-5">{section.title}</h2>
+
+          <Link
+            to={section.route}
+            className=" text-gray-50 p-3 text-center transition-all duration-500"
+            style={{ backgroundColor: "#2c3e50" }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#465669")}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = "#2c3e50")}
+          >
+            Saber más
           </Link>
-        </motion.div>
-      ))}
+        </div>
+      ))}     
     </div>
   );
 };

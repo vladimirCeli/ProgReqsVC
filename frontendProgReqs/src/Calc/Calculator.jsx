@@ -56,9 +56,6 @@ export default class AssessmentCalculator {
                     var lvl2 = (question_values[1] + question_values[4]) / 2;
                     var lvl3 = (question_values[2] + question_values[5]) / 2;
                     var score = lvl1 + lvl2 + lvl3;
-                    if (bussFunc === "Implementation") {
-                        console.log('practice', practice, 'score', score);
-                    }
                     this.sammModel[bussFunc]["practices"][practice]["score"] = score;
                     this.sammModel[bussFunc]["totalScore"] += score / 3;
                     this.practiceScores.push(score);

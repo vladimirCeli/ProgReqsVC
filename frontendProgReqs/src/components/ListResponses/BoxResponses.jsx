@@ -1,83 +1,58 @@
-import { Typography, Paper, Grid, CardContent, Box, IconButton } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { motion } from "framer-motion";
-
-const variants = {
-    hidden: { opacity: 0, y: -50 },
-    visible: { opacity: 1, y: 0 },
-  };
-
-const BoxResponses = ({
-    response,
-    handleDelete,
-    id1,
-    id2,
-    navigate,
- }) => {
+const BoxResponses = ({ response, handleDelete, id1, id2, navigate }) => {
   return (
-   <Box display="flex" flexDirection="column" alignItems="center">
-        <h1>Lista de Respuestas</h1>
-        <Typography variant="h6" sx={{ mb: 2 }}></Typography>
-        <Grid container spacing={2}>
-          {Array.isArray(response) &&
-          Object.keys(response).length > 0 ? (
-            response.map((project) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={project.id}>
-                <motion.div
-                  key={project.id}
-                  initial="hidden"
-                  animate="visible"
-                  variants={variants}
-                >
-                  <Paper elevation={3} style={{ borderRadius: "16px", justifyContent: "center", alignItems: "center", textAlign: "center" }}>
-                    <CardContent>
-                      <Typography
-                        variant="h5"
-                        component="h2"
-                        align="inherit"
-                        noWrap
-                      >
-                        {project.name}
-                      </Typography>
-                      <Box mt={2} mb={1}>
-                        <IconButton
-                          color="secondary"
-                          onClick={() =>
-                            navigate(`/response/${id1}/${id2}/${project._id}/edit`)
-                          }
-                          aria-label="Editar"
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton
-                          color="error"
-                          onClick={() => handleDelete(project._id)}
-                          aria-label="Eliminar"
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                        <IconButton
-                          color="success"
-                          onClick={() => navigate(`/graphicsresults/${id1}/${id2}/${project._id}`)}
-                          aria-label="Ver"
-                        >
-                            <VisibilityIcon />
-                        </IconButton>
-                      </Box>
-                    </CardContent>
-                  </Paper>
-                </motion.div>
-              </Grid>
-            ))
-          ) : (
-            <Typography variant="h6" sx={{ mb: 2 }}>
-              No hay Respuestas
-            </Typography>
-          )}
-        </Grid>
-      </Box>
+    <div className="container mx-auto px-4 text-center">
+      <h1 className="text-2xl font-bold text-gray-800 mb-4">
+        Lista de Respuestas
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
+        {response.length > 0 ? (
+          response.map((project) => (
+            <div className="mt-4" key={project.id}>
+              <div className="bg-white rounded-lg shadow-md p-4 transition duration-300 ease-in-out transform hover:scale-105 text-center bg-opacity-75">
+                <div>
+                  <p className="text-lg font-semibold">{project.name}</p>
+                </div>
+                <div className="grid grid-cols-3 justify-end mt-2 ">
+                  <button
+                    onClick={() =>
+                      navigate(`/graphicsresults/${id1}/${id2}/${project._id}`)
+                    }
+                    style={{ backgroundColor: "#2c3e50" }}
+                    className="text-white py-2 px-4 rounded mr-2 flex items-center text-center justify-center"
+                    onMouseOver={(e) =>
+                      (e.target.style.backgroundColor = "#465669")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.target.style.backgroundColor = "#2c3e50")
+                    }
+                  >
+                    Ver
+                  </button>
+                  <button
+                    onClick={() =>
+                      navigate(`/response/${id1}/${id2}/${project._id}/edit`)
+                    }
+                    className="bg-yellow-600 hover:bg-yellow-700 text-white py-2 px-4 rounded mr-2 flex items-center text-center justify-center"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => handleDelete(project._id)}
+                    className="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded flex items-center text-center justify-center"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="text-lg font-semibold mt-4 text-gray-800">
+            No hay Respuestas
+          </p>
+        )}
+      </div>
+    </div>
   );
 };
 

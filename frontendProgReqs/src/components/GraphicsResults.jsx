@@ -1,20 +1,19 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Radar } from "react-chartjs-2";
-import { Box, Typography, CircularProgress } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import { responseApiId, questionnairesComplete } from "../Services/Fetch";
-import axios from "axios";
 import assessment from "../Calc/Calculator";
 import SpiderGraph from "../Calc/PracticeGraf";
-import { motion } from "framer-motion";
 import { RadialLinearScale } from "chart.js";
 import Chart from "chart.js/auto";
 
 Chart.register(RadialLinearScale);
 
 var dataENV = [];
-var finalScore = [0, 0];
-var percentageScore = 0;
+let finalScore = [0, 0];
+let percentageScore = 0;
+var modelConfig = {};
 const practiceRadar = new SpiderGraph();
 practiceRadar.set_title_text("practice");
 
@@ -23,52 +22,52 @@ const GraphicsResults = () => {
   const [questionnaire, setQuestionnaire] = useState(null);
   const [responses, setResponses] = useState({});
   const [showPrevious, setShowPrevious] = useState(false);
-  const [model, setModel] = useState({});
   const [final, setFinal] = useState(0);
   const radarRef = useRef(null);
-  const [loading, setLoading] = useState(true);
+  const [finalScores, setFinalScores] = useState([0, 0]);
 
   const questionnaireId = id1;
 
   useEffect(() => {
-    const loadQuestionnaire = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get(
+        const questionnaireResponse = await fetch(
           questionnairesComplete + questionnaireId
         );
-        setQuestionnaire(response.data);
+        const responseData = await fetch(responseApiId + id3);
+
+        if (questionnaireResponse.ok) {
+          const questionnaireData = await questionnaireResponse.json();
+          setQuestionnaire(questionnaireData);
+        } else {
+          console.log("Error al obtener el cuestionario");
+        }
+
+        if (responseData.ok) {
+          const responseJson = await responseData.json();
+          setResponses(responseJson.questions || {});
+        } else {
+          console.log("Error al obtener las respuestas");
+        }
       } catch (e) {
-        console.error("Error al obtener el cuestionario:", e);
+        console.error("Error al obtener los datos:", e);
       }
     };
-    if (id3) {
-      axios
-        .get(responseApiId + id3)
-        .then((response) => {
-          const responseData = response.data;
-          setResponses(responseData.questions || {});
-          loadQuestionnaire();
-        })
-        .catch((error) => {
-          console.error("Error al obtener la respuesta:", error);
-        });
-    } else {
-      loadQuestionnaire();
-    }
-  }, [questionnaireId, id3]);
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
-    setLoading(true);
-    if (questionnaire) {
-      const modelConfig = {};
+    if (questionnaire && responses) {
+
       let currentQuestionIndex = 1;
 
-      questionnaire.categories.forEach((category, categoryIndex) => {
+      questionnaire.categories.forEach((category) => {
         const categoryConfig = {
           totalScore: 0,
           practices: {},
         };
-        category.practices.forEach((practice, practiceIndex) => {
+        category.practices.forEach((practice) => {
           const practiceConfig = {
             start: currentQuestionIndex,
             numQuestions: practice.questions.length,
@@ -79,150 +78,84 @@ const GraphicsResults = () => {
         });
         modelConfig[category.name] = categoryConfig;
       });
-      setModel(modelConfig);
-    }
-
+    
     const transformedObject = {};
     var cont = 0;
     for (const key in responses) {
       cont++;
+      // eslint-disable-next-line no-prototype-builtins
       if (responses.hasOwnProperty(key)) {
         const newPropertyName = `question${cont}`;
         transformedObject[newPropertyName] = responses[key];
       }
     }
     dataENV[0] = transformedObject;
-
-    for (let dataNum = 0; dataNum < dataENV.length; dataNum++) {
-      var testCalc = new assessment(dataENV[dataNum], model);
-      testCalc.computeResults();
-      if (testCalc.overallScore) {
-        finalScore[dataNum] = testCalc.overallScore
-          ? testCalc.overallScore.toFixed(2)
-          : 0;
-        console.log("Final score: ", finalScore[dataNum]);
-
+    if (dataENV && Object.keys(dataENV).length) {
+      for (let dataNum = 0; dataNum < dataENV.length; dataNum++) {
+        var testCalc = new assessment(dataENV[dataNum], modelConfig);
+        testCalc.computeResults();
         practiceRadar.metaData.labels = testCalc.practiceNames;
         practiceRadar.metaData.datasets[dataNum].data = testCalc.practiceScores;
-
+        if (testCalc.overallScore !== null) {
+          finalScore[dataNum] = testCalc.overallScore.toFixed(2);
+          setFinalScores([finalScore[dataNum], 0]);
+        }
         percentageScore = parseFloat(
           ((finalScore[dataNum] / 3) * 100).toFixed(2)
         );
-
-        console.log("Percentage score: ", percentageScore);
-
-        console.log("Datos de la gráfica:", practiceRadar.metaData);
-        console.log("Puntuación final:", final);
       }
     }
-    console.log("Final score: ", finalScore);
-    console.log("Percentage score: ", percentageScore);
 
     setFinal(percentageScore);
+  }
     //setLoading(false);
   }, [questionnaire, responses]);
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setLoading(false); // Establece loading en false después de un minuto
-    }, 13000); // 1 minuto en milisegundos
-
-    // Limpia el temporizador si el componente se desmonta antes del tiempo especificado
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, []);
-
-  if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        height="100vh"
-      >
-        <div>
-          <CircularProgress />
-        </div>
-      </Box>
-    );
-  }
-
   return (
-    <>
-      <Box display="flex" flexDirection="column" alignItems="center">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-        >
-          <Typography variant="h6" id="finalscore">
-            {showPrevious
-              ? `Tu puntuación general es: ${finalScore[0]}/3. Tu puntuación anterior fue: ${finalScore[1]}/3`
-              : `Tu puntuación general es: ${finalScore[0]}/3`}
-          </Typography>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "column",
-              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-              borderRadius: "50%",
-              width: "200px",
-              height: "200px",
-              position: "relative",
-            }}
-          >
-            <Typography
-              variant="h6"
-              component="div"
-              color="textPrimary"
-              sx={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-              }}
-            >
-              {final}%
-            </Typography>
-            <CircularProgress
-              variant="determinate"
-              value={percentageScore}
-              size={150}
-              thickness={5}
-              sx={{
-                color: (theme) =>
-                  percentageScore <= 25
-                    ? "#ff6384"
-                    : percentageScore <= 50
-                    ? "#ff9f40"
-                    : percentageScore <= 75
-                    ? "#ffcd56"
-                    : "#4bc0c0",
-              }}
-            />
-          </Box>
-        </motion.div>
-      </Box>
-      <div label="Practices" className="practices">
-        <Box width={[1, 1 / 2]} p={3} className="practiceRadarBox">
-          <h2 id="pracradargraph"> Madurez en la práctica </h2>
-          {practiceRadar.metaData.labels.length > 0 ? (
-            <Radar
-              key={JSON.stringify(practiceRadar.metaData)}
-              ref={radarRef}
-              data={practiceRadar.metaData}
-              options={practiceRadar.layout_props}
-              className="practiceRadar"
-            />
-          ) : (
-            <p>Los datos no están disponibles.</p>
-          )}
-        </Box>
+<>
+  <div className="flex flex-col items-center text-center justify-center mb-8">
+      <h6 className="text-3xl font-bold text-white mb-4" id="finalscore">
+        {showPrevious
+          ? `Tu puntuación general es: ${finalScores[0]}/3. Tu puntuación anterior fue: ${finalScores[1]}/3`
+          : `Tu puntuación general es: ${finalScores[0]}/3`}
+      </h6>
+      <div className="flex justify-center items-center flex-col shadow-md rounded-full w-48 h-48 relative bg-blue-200 bg-opacity-75">
+        <h6 className="text-lg font-bold text-black absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">{final}%</h6>
+        <CircularProgress
+          variant="determinate"
+          value={final}
+          size={150}
+          thickness={5}
+          className={
+            percentageScore <= 25
+              ? "text-red-500"
+              : percentageScore <= 50
+              ? "text-yellow-500"
+              : percentageScore <= 75
+              ? "text-yellow-300"
+              : "text-green-400"
+          }
+        />
       </div>
-    </>
+  </div>
+  <div label="Practices" className="practices flex flex-col items-center justify-center text-center mt-8">
+    <div className="w-full md:w-1/2 p-3 practiceRadarBox bg-blue-200 bg-opacity-75 rounded-lg shadow-xl">
+      <h2 id="pracradargraph" className="text-3xl font-bold text-gray-800 mb-4"> Madurez en la práctica </h2>
+      {practiceRadar.metaData.labels.length > 0 ? (
+        <Radar
+          key={JSON.stringify(practiceRadar.metaData)}
+          ref={radarRef}
+          data={practiceRadar.metaData}
+          options={practiceRadar.layout_props}
+          className="practiceRadar"
+        />
+      ) : (
+        <p>Los datos no están disponibles.</p>
+      )}
+    </div>
+  </div>
+</>
+
   );
 };
 

@@ -15,6 +15,12 @@ const questionnaireSchema = new mongoose.Schema({
     default: false,
     required: true,
   },
+  steps: {
+    type: Number,
+    default: 0,
+    required: true,
+    unique: true,
+  },
   categories: [
     {
       type: mongoose.Schema.Types.ObjectId,

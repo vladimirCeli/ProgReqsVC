@@ -13,6 +13,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
+import useToast from "../hooks/useToast";
 
 import {
   responseApi,
@@ -21,6 +22,7 @@ import {
 } from "../Services/Fetch";
 
 const Response = () => {
+  const { toast } = useToast();
   const { id1, id2, id3 } = useParams();
   const navigate = useNavigate();
   const [questionnaire, setQuestionnaire] = useState(null);
@@ -47,7 +49,6 @@ const Response = () => {
 
   useEffect(() => {
     if (id3) {
-
       setEditMode(true);
       axios
         .get(responseApiId + id3)
@@ -134,23 +135,37 @@ const Response = () => {
     };
 
     if (editMode) {
-      axios
-        .put(responseApiId + id3, data)
-        .then(() => {
-          navigate(`/listresponses/${id1}/${id2}`);
-        })
-        .catch((error) => {
-          console.error("Error al actualizar la respuesta:", error);
-        });
+
+      const response = await fetch(responseApiId + id3, {
+        method: "PUT",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data2 = await response.json();
+      if (response.ok) {
+        toast.success(data2.message);
+        navigate(`/listresponses/${id1}/${id2}`);
+      } else {
+        toast.error(data2.message);
+      }
     } else {
-      axios
-        .post(responseApi, data)
-        .then((response) => {
-          navigate(`/projects/${id2}`);
-        })
-        .catch((error) => {
-          console.error("Error al crear la respuesta:", error);
-        });
+
+      const response = await fetch(responseApi, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data2 = await response.json();
+      if (response.ok) {
+        toast.success(data2.message);
+        navigate(`/projects/${id2}`);
+      } else {
+        toast.error(data2.message);
+      }
     }
   };
 
@@ -159,141 +174,134 @@ const Response = () => {
   };
 
   if (!questionnaire) {
-    return <div>Cargando...</div>;
+    return <div className="container mx-auto mt-10">Cargando...</div>;
   }
 
   const currentCategory = questionnaire.categories[currentCategoryIndex];
 
   return (
-    <Container maxWidth="lg" style={{ marginTop: "20px" }}>
-      <Typography variant="h4" align="center">
-        {editMode ? "Editar Respuesta" : "Responder Cuestionario"}:{" "}
-        {questionnaire.name}
-      </Typography>
 
-      <TextField
-        label="Nombre de Respuesta"
-        required
-        variant="outlined"
-        fullWidth
-        autoFocus
-        sx={{
-          mb: 2,
-        }}
-        value={responseName}
-        onChange={handleChange}
-      />
+      <div className="container mx-auto px-4">
+        <div className="container mx-auto mt-10 p-4 md:p-8 bg-white bg-opacity-75 rounded-lg shadow-lg">
+          <h1 className="text-4xl text-center mb-4 text-blue-900">
+            {editMode ? "Editar Respuesta" : "Responder Cuestionario"}:{" "}
+            {questionnaire.name}
+          </h1>
 
-      {currentCategory && (
-        <Paper elevation={3} style={{ marginBottom: "20px", padding: "20px" }}>
-          <Typography variant="h5" align="center" gutterBottom>
-            {currentCategory.name}
-          </Typography>
-          <Typography variant="h6" align="center">
-            {currentCategory.practices[currentPracticeIndex].name}
-          </Typography>
-          {currentCategory.practices[currentPracticeIndex].questions.map(
-            (question) => (
-              <div key={question._id}>
-                <Typography variant="body1" gutterBottom>
-                  {question.question}
-                </Typography>
-                <FormControl component="fieldset">
-                  <FormLabel component="legend">Opciones</FormLabel>
-                  <RadioGroup
-                    row
-                    value={
-                      responses[`question${question._id}`] !== undefined
-                        ? responses[`question${question._id}`]
-                        : null
-                    }
-                    onChange={(e) =>
-                      handleOptionChange(question._id, e.target.value)
-                    }
+          <input
+            type="text"
+            placeholder="Nombre de Respuesta"
+            required
+            className="w-full border-2 border-gray-300 rounded-md p-2 mb-4 shadow-md transition-all duration-300 focus:outline-none focus:shadow-md"
+            autoFocus
+            value={responseName}
+            onChange={handleChange}
+          />
+
+          {currentCategory && (
+            <div className="p-4 mb-4 shadow-md rounded-md bg-gray-100">
+              <h2 className="text-2xl text-center mb-2 text-blue-900">
+                {currentCategory.name}
+              </h2>
+              <h3 className="text-xl text-center text-blue-800">
+                {currentCategory.practices[currentPracticeIndex].name}
+              </h3>
+              {currentCategory.practices[currentPracticeIndex].questions.map(
+                (question) => (
+                  <div
+                    key={question._id}
+                    className="mb-4 shadow-md rounded-md p-4 bg-white"
                   >
-                    {question.options &&
-                      question.options.map((option) => (
-                        <FormControlLabel
-                          key={option._id}
-                          value={
-                            option.value !== undefined
-                              ? option.value.toString()
-                              : null
-                          }
-                          control={<Radio />}
-                          label={option.text}
-                        />
-                      ))}
-                  </RadioGroup>
-                </FormControl>
+                    <p className="text-lg mb-2 text-gray-800">
+                      {question.question}
+                    </p>
+                    <div className="space-y-2">
+                      {question.options &&
+                        question.options.map((option) => (
+                          <label
+                            key={option._id}
+                            className="block text-gray-800"
+                          >
+                            <input
+                              type="radio"
+                              value={option.value}
+                              checked={
+                                responses[`question${question._id}`] ===
+                                option.value
+                              }
+                              onChange={() =>
+                                handleOptionChange(question._id, option.value)
+                              }
+                              className="mr-2"
+                            />
+                            {option.text}
+                          </label>
+                        ))}
+                    </div>
+                  </div>
+                )
+              )}
+              <div className="flex justify-between">
+                <button
+                  className={`text-white font-bold py-2 px-4 rounded mt-2 flex-1 ${
+                    currentPracticeIndex === 0
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-900 hover:bg-blue-800"
+                  }`}
+                  onClick={handlePreviousPractice}
+                  disabled={currentPracticeIndex === 0}
+                >
+                  Práctica Anterior
+                </button>
+                <button
+                  className={`text-white font-bold py-2 px-4 rounded mt-2 flex-1 ${
+                    currentPracticeIndex ===
+                    currentCategory.practices.length - 1
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-900 hover:bg-blue-800"
+                  }`}
+                  onClick={handleNextPractice}
+                  disabled={
+                    currentPracticeIndex ===
+                    currentCategory.practices.length - 1
+                  }
+                >
+                  Siguiente Práctica
+                </button>
               </div>
-            )
+
+              {currentCategoryIndex > 0 && (
+                <button
+                  className="text-white font-bold py-2 px-4 rounded mt-2 w-full bg-blue-900 hover:bg-blue-800"
+                  onClick={handlePreviousCategory}
+                >
+                  Categoría Anterior
+                </button>
+              )}
+              {currentCategoryIndex < questionnaire.categories.length - 1 && (
+                <button
+                  className="text-white font-bold py-2 px-4 rounded mt-2 w-full bg-blue-900 hover:bg-blue-800"
+                  onClick={handleNextCategory}
+                >
+                  Siguiente Categoría
+                </button>
+              )}
+              {currentCategoryIndex === questionnaire.categories.length - 1 &&
+                currentPracticeIndex ===
+                  currentCategory.practices.length - 1 && (
+                  <button
+                    type="submit"
+                    className="bg-blue-900 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded mt-2 w-full"
+                    onClick={handleSubmit}
+                  >
+                    {editMode ? "Guardar Cambios" : "Enviar Respuestas"}
+                  </button>
+                )}
+            </div>
           )}
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mt: 2, flex: 1 }}
-              onClick={handlePreviousPractice}
-              disabled={currentPracticeIndex === 0}
-            >
-              Práctica Anterior
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ mt: 2, flex: 1 }}
-              onClick={handleNextPractice}
-              disabled={
-                currentPracticeIndex === currentCategory.practices.length - 1
-              }
-            >
-              Siguiente Práctica
-            </Button>
-          </div>
-          {currentCategoryIndex > 0 && (
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{
-                mt: 2,
-              }}
-              onClick={handlePreviousCategory}
-            >
-              Categoría Anterior
-            </Button>
-          )}
-          {currentCategoryIndex < questionnaire.categories.length - 1 && (
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{
-                mt: 2,
-              }}
-              onClick={handleNextCategory}
-            >
-              Siguiente Categoría
-            </Button>
-          )}
-          {currentCategoryIndex === questionnaire.categories.length - 1 &&
-            currentPracticeIndex === currentCategory.practices.length - 1 && (
-              <Button
-                variant="contained"
-                color="primary"
-                fullWidth
-                sx={{
-                  mt: 2,
-                }}
-                onClick={handleSubmit}
-              >
-               {editMode ? "Guardar Cambios" : "Enviar Respuestas"}
-              </Button>
-            )}
-        </Paper>
-      )}
-    </Container>
+        </div>
+      </div>
+    
   );
 };
 
