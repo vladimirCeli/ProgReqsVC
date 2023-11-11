@@ -19,7 +19,10 @@ const questionnaireSchema = new mongoose.Schema({
     type: Number,
     default: 0,
     required: true,
-    unique: true,
+  },
+  selected: {
+    type: Boolean,
+    default: false,
   },
   categories: [
     {

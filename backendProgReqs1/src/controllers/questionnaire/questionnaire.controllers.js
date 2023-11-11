@@ -1,4 +1,5 @@
 const Questionnaire = require('../../model/questionnaire/questionnaire.model');
+const Response = require('../../model/questionnaire/response.model');
 
 // Obtener todos los cuestionarios
 const getAllQuestionnaires = async (req, res) => {
@@ -27,18 +28,67 @@ const getQuestionnaireById = async (req, res) => {
 
 const getQuestionnairePublished = async (req, res) => {
   try {
-    const questionnaires = await Questionnaire.find({ published: true }).populate('categories');
+    const { project_id } = req.params;
 
-    if (!questionnaires || questionnaires.length === 0) {
-      return res.status(404).json({ error: 'No se encontraron cuestionarios publicados.' });
+    // Obtener cuestionarios publicados con steps 1
+    const questionnairesStep1 = await Questionnaire.find({
+      published: true,
+      steps: 1,
+    }).populate('categories');
+
+    if (!questionnairesStep1 || questionnairesStep1.length === 0) {
+      return res.status(404).json({ error: 'No se encontraron cuestionarios con steps 1.' });
     }
 
-    res.status(200).json(questionnaires);
+    // Verificar si hay respuestas para cuestionarios con steps 1
+    const hasResponsesStep1 = await Response.exists({
+      project_id,
+      questionnaire_id: { $in: questionnairesStep1.map(q => q._id) },
+    });
+
+    // Si hay respuestas, obtener cuestionarios con steps 1 y 2
+    if (hasResponsesStep1) {
+      const questionnairesStep1And2 = await Questionnaire.find({
+        published: true,
+        steps: { $in: [1, 2] },
+      }).populate('categories');
+
+      // Verificar si hay respuestas para cuestionarios con steps 2
+      const hasResponsesStep2 = await Response.exists({
+        project_id,
+        questionnaire_id: { $in: questionnairesStep1And2.map(q => q._id) },
+      });
+
+      // Si hay respuestas, obtener todos los cuestionarios con steps 0, 1, y 2
+      if (hasResponsesStep2) {
+        const questionnairesAllSteps = await Questionnaire.find({
+          published: true,
+          steps: { $in: [0, 1, 2] },
+        }).populate('categories');
+
+        // Filtrar cuestionarios con steps 0 que tienen respuestas
+        const questionnairesWithResponsesStep0 = questionnairesAllSteps.filter(async (q) => {
+          if (q.steps === 0) {
+            return await Response.exists({ project_id, questionnaire_id: q._id });
+          }
+          return true;
+        });
+
+        res.status(200).json(questionnairesWithResponsesStep0);
+      } else {
+        // No hay respuestas para cuestionarios con steps 2, devolver cuestionarios con steps 1
+        res.status(200).json(questionnairesStep1And2);
+      }
+    } else {
+      // No hay respuestas para cuestionarios con steps 1, devolver cuestionarios con steps 1
+      res.status(200).json(questionnairesStep1);
+    }
   } catch (error) {
     console.error('Error al obtener cuestionarios publicados:', error);
     res.status(500).json({ error: 'Hubo un error al obtener cuestionarios publicados.' });
   }
 }
+
 
 const updateQuestionnaireByIdInPublishedOrUnpublished = async (req, res) => {
   try {

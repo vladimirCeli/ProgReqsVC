@@ -17,7 +17,7 @@ router.get('/questionnaire', getAllQuestionnaires )
 
 router.get('/questionnaire/complete/:id', getQuestionnaireComplete )
 
-router.get('/questionnaire/published', getQuestionnairePublished )
+router.get('/questionnaire/published/:project_id', getQuestionnairePublished )
 
 router.put('/questionnaire/editpublished/:id', updateQuestionnaireByIdInPublishedOrUnpublished)
 
