@@ -42,7 +42,7 @@ export const questionnairesbyidApi = `${baseURl}/questionnaire/`;
 
 export const questionnairesComplete = `${baseURl}/questionnaire/complete/`;
 
-export const questionnairesPublished = `${baseURl}/questionnaire/published`;
+export const questionnairesPublished = `${baseURl}/questionnaire/published/`;
 
 export const questionnairesEditPublished = `${baseURl}/questionnaire/editpublished/`;
 

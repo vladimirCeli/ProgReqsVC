@@ -9,6 +9,7 @@ import {
   requirementtoedit,
   projectsbyid,
   questionnairesPublished,
+  getResponseByProjectIdApi
 } from "../../Services/Fetch";
 
 import ProjectsQuestionnaires from "../../components/ProjectInfo/ProjectsQuestionnaires";
@@ -164,12 +165,67 @@ export default function Projects() {
   };
 
   useEffect(() => {
-    const loadQuestionnaire = () => {
-      fetch(questionnairesPublished)
-        .then((res) => res.json())
-        .then((data) => {
-          setQuestionnaires(data);
-        });
+    
+    const loadQuestionnaire = async () => {
+      const project_id = params.id;
+    
+      try {
+        const response = await fetch(questionnairesPublished+project_id);
+        const data = await response.json();
+    
+        const questionnairesStep1 = data.filter(q => q.steps === 1);
+    
+        if (questionnairesStep1.length > 0) {
+          const hasResponsesStep1 = await checkResponses(project_id, questionnairesStep1);
+    
+          if (hasResponsesStep1) {
+            const questionnairesStep1And2 = data.filter(q => q.steps === 1 || q.steps === 2);
+            const hasResponsesStep2 = await checkResponses(project_id, questionnairesStep1And2);
+    
+            if (hasResponsesStep2) {
+              const questionnairesAllSteps = data.filter(q => q.steps === 0 || q.steps === 1 || q.steps === 2);
+              const questionnairesWithResponsesStep0 = await filterResponsesStep0(project_id, questionnairesAllSteps);
+    
+              setQuestionnaires(questionnairesWithResponsesStep0);
+            } else {
+              setQuestionnaires(questionnairesStep1And2);
+            }
+          } else {
+            setQuestionnaires(questionnairesStep1);
+          }
+        } else {
+          setQuestionnaires([]);
+        }
+      } catch (error) {
+        console.error('Error al cargar cuestionarios:', error);
+        // Manejar el error según tus necesidades
+      }
+    };
+    
+    const checkResponses = async (project_id, questionnaires) => {
+      for (const questionnaire of questionnaires) {
+        const hasResponses = await fetchAndCheckResponses(project_id, questionnaire._id);
+        if (hasResponses) {
+          return true;
+        }
+      }
+      return false;
+    };
+    
+    const fetchAndCheckResponses = async (project_id, questionnaire_id) => {
+      const response = await fetch(getResponseByProjectIdApi+project_id+"/"+questionnaire_id);
+      const responseData = await response.json();
+      return responseData.length > 0;
+    };
+    
+    const filterResponsesStep0 = async (project_id, questionnaires) => {
+      return Promise.all(questionnaires.map(async (q) => {
+        if (q.steps === 0) {
+          const hasResponses = await fetchAndCheckResponses(project_id, q._id);
+          return hasResponses ? q : null;
+        }
+        return q;
+      })).then(filteredQuestionnaires => filteredQuestionnaires.filter(Boolean));
     };
     const loadProject = async (id) => {
       try {

@@ -1,6 +1,4 @@
-import {
-  QuestionMarkCircleIcon,
-} from "@heroicons/react/24/outline";
+import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 
 const ProjectsQuestionnaires = ({ questionnaires, paramsId, navigate }) => {
   return (
@@ -9,9 +7,9 @@ const ProjectsQuestionnaires = ({ questionnaires, paramsId, navigate }) => {
         Lista de cuestionarios habilitados
       </h1>
       {questionnaires.length > 0 ? (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {questionnaires.map((project) => (
-            <div key={paramsId}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {questionnaires.map((project) => (
+            <div key={project._id}>
               <div className="bg-white rounded shadow p-4 transition duration-300 ease-in-out transform hover:scale-105 text-center bg-opacity-75">
                 <QuestionMarkCircleIcon
                   className="h-12 w-12 mx-auto mb-4"
@@ -51,13 +49,12 @@ const ProjectsQuestionnaires = ({ questionnaires, paramsId, navigate }) => {
             </div>
           ))}
         </div>
-        ) : (
-          <p className="text-lg mb-4 text-white">
-            No hay cuestionarios habilitados
-          </p>
-        )}
-      </div>
-
+      ) : (
+        <p className="text-lg mb-4 text-white">
+          No hay cuestionarios habilitados
+        </p>
+      )}
+    </div>
   );
 };
 
