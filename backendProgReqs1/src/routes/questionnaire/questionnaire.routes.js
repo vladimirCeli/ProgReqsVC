@@ -1,34 +1,43 @@
-const {Router} = require('express')
-const {     getAllQuestionnaires,
-    getQuestionnaireById,
-    updateQuestionnaireByIdInPublishedOrUnpublished,
-    updateQuestionnaireByIdSteps,
-    getQuestionnairePublished,
-    getQuestionnaireComplete,
-    createQuestionnaire,
-    updateQuestionnaireById,
-    deleteQuestionnaireById } = require('../../controllers/questionnaire/questionnaire.controllers')
+const { Router } = require("express");
+const {
+  getAllQuestionnaires,
+  getQuestionnaireById,
+  updateQuestionnaireByIdInPublishedOrUnpublished,
+  updateQuestionnaireByIdSteps,
+  getAdditionalQuestionnaires,
+  selectAdditionalQuestionnaire,
+  getQuestionnairePublished,
+  getQuestionnaireComplete,
+  createQuestionnaire,
+  updateQuestionnaireById,
+  deleteQuestionnaireById,
+} = require("../../controllers/questionnaire/questionnaire.controllers");
 
-const router = Router()
+const router = Router();
 
-router.get('/questionnaire', getAllQuestionnaires )
+router.get("/questionnaire", getAllQuestionnaires);
 
+router.get("/questionnaire/complete/:id", getQuestionnaireComplete);
 
+router.get("/questionnaire/published/:project_id", getQuestionnairePublished);
 
-router.get('/questionnaire/complete/:id', getQuestionnaireComplete )
+router.put(
+  "/questionnaire/editpublished/:id",
+  updateQuestionnaireByIdInPublishedOrUnpublished
+);
 
-router.get('/questionnaire/published/:project_id', getQuestionnairePublished )
+router.get("/questionnaire/additional", getAdditionalQuestionnaires);
 
-router.put('/questionnaire/editpublished/:id', updateQuestionnaireByIdInPublishedOrUnpublished)
+router.put("/questionnaire/additional/:projectId", selectAdditionalQuestionnaire);
 
-router.put('/questionnaire/editsteps/:id', updateQuestionnaireByIdSteps )
+router.put("/questionnaire/editsteps/:id", updateQuestionnaireByIdSteps);
 
-router.post('/questionnaire', createQuestionnaire )
+router.post("/questionnaire", createQuestionnaire);
 
-router.delete('/questionnaire/:id', deleteQuestionnaireById )
+router.delete("/questionnaire/:id", deleteQuestionnaireById);
 
-router.put('/questionnaire/:id', updateQuestionnaireById )
+router.put("/questionnaire/:id", updateQuestionnaireById);
 
-router.get('/questionnaire/:id', getQuestionnaireById )
+router.get("/questionnaire/:id", getQuestionnaireById);
 
-module.exports = router
+module.exports = router;

@@ -1,6 +1,49 @@
+import { useEffect, useState } from "react";
+
 import { QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 
+import { questionnairesAdditional, questionnairesAdditionalProject  } from "../../Services/Fetch";
+
 const ProjectsQuestionnaires = ({ questionnaires, paramsId, navigate }) => {
+  
+  const [additionalQuestionnaires, setAdditionalQuestionnaires] = useState([]);
+  const [selectedAdditionalQuestionnaire, setSelectedAdditionalQuestionnaire] = useState(null);
+
+  const loadAdditionalQuestionnaires = async () => {
+    try {
+      const response = await fetch(questionnairesAdditional);
+      const data = await response.json();
+      setAdditionalQuestionnaires(data);
+    } catch (error) {
+      console.error("Error al cargar cuestionarios adicionales:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadAdditionalQuestionnaires();
+  }, [questionnaires]);
+
+  const handleSelectAdditionalQuestionnaire = async (selectedId) => {
+    try {
+      const response = await fetch(questionnairesAdditionalProject+paramsId, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ selectedId }),
+      });
+
+      if (response.ok) {
+        setSelectedAdditionalQuestionnaire(selectedId);
+        loadAdditionalQuestionnaires();
+      } else {
+        console.error("Error al seleccionar cuestionario adicional:", response.status);
+      }
+    } catch (error) {
+      console.error("Error al seleccionar cuestionario adicional:", error);
+    }
+  };
+
   return (
     <div className="container mx-auto px-4 text-center">
       <h1 className="text-3xl font-bold text-gray-800 mb-4">
@@ -53,6 +96,27 @@ const ProjectsQuestionnaires = ({ questionnaires, paramsId, navigate }) => {
         <p className="text-lg mb-4 text-white">
           No hay cuestionarios habilitados
         </p>
+      )}
+      {additionalQuestionnaires.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Seleccione un cuestionario adicional
+          </h2>
+          <select
+            className="p-2 border border-gray-300 rounded"
+            onChange={(e) => handleSelectAdditionalQuestionnaire(e.target.value)}
+            value={selectedAdditionalQuestionnaire || ""}
+          >
+            <option value="">
+              Seleccionar cuestionario adicional
+            </option>
+            {additionalQuestionnaires.map((additionalProject) => (
+              <option key={additionalProject._id} value={additionalProject._id}>
+                {additionalProject.name}
+              </option>
+            ))}
+          </select>
+        </div>
       )}
     </div>
   );
