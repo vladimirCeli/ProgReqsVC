@@ -26,9 +26,9 @@ router.put(
   updateQuestionnaireByIdInPublishedOrUnpublished
 );
 
-router.get("/questionnaire/additional", getAdditionalQuestionnaires);
+router.get("/questionnaire/additional/:project_id", getAdditionalQuestionnaires);
 
-router.put("/questionnaire/additional/:projectId", selectAdditionalQuestionnaire);
+router.post("/questionnaire/add/:projectId", selectAdditionalQuestionnaire);
 
 router.put("/questionnaire/editsteps/:id", updateQuestionnaireByIdSteps);
 

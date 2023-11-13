@@ -1,4 +1,5 @@
 const Requirement = require("../model/Requirements.model");
+const { Op } = require("sequelize");
 
 const getAllRequirements = async (req, res, next) => {
   try {
@@ -13,10 +14,25 @@ const getRequirementByProject = async (req, res, next) => {
   try {
     const { id } = req.params;
     const requirements = await Requirement.findAll({
-      where: { project_id: id },
+      where: { project_id: id, req_no_funtional: { [Op.not]: null }, characteristicsr: { [Op.not]: null } },
     });
     if (requirements.length === 0) {
       return res.status(404).json({ message: "No existen requisitos para este proyecto" });
+    }
+    res.status(200).json(requirements);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getRequirementNotFunctionalByProject = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const requirements = await Requirement.findAll({
+      where: { project_id: id, req_no_funtional: null, characteristicsr: null },
+    });
+    if (requirements.length === 0) {
+      return res.status(404).json({ message: "No existen requisitos no funcionales para este proyecto" });
     }
     res.status(200).json(requirements);
   } catch (error) {
@@ -132,4 +148,5 @@ module.exports = {
   deleteRequirement,
   updateRequirement,
   getRequirementByProject,
+  getRequirementNotFunctionalByProject
 };

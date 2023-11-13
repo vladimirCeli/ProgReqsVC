@@ -35,11 +35,17 @@ const getQuestionnaireById = async (req, res) => {
 const getQuestionnairePublished = async (req, res) => {
   try {
     const { project_id } = req.params;
+    const { selectedId } = req.body;
 
     // Obtener cuestionarios publicados con steps 1
     const questionnairesStep1 = await Questionnaire.find({
       published: true,
       steps: 1,
+    });
+
+    const questionnairesStep2 = await Questionnaire.find({
+      published: true,
+      steps: 2,
     });
 
     if (!questionnairesStep1 || questionnairesStep1.length === 0) {
@@ -54,6 +60,8 @@ const getQuestionnairePublished = async (req, res) => {
       questionnaire_id: { $in: questionnairesStep1.map((q) => q._id) },
     });
 
+    console.log("hasResponsesStep1: " + hasResponsesStep1);
+
     // Si hay respuestas, obtener cuestionarios con steps 1 y 2
     if (hasResponsesStep1) {
       const questionnairesStep1And2 = await Questionnaire.find({
@@ -65,61 +73,122 @@ const getQuestionnairePublished = async (req, res) => {
         return res
           .status(404)
           .json({ error: "No se encontraron cuestionarios con steps 1 y 2." });
-      } else {
-        for (let i = 0; i < questionnairesStep1And2.length; i++) {
-          await Questionnaire.findByIdAndUpdate(
-            questionnairesStep1And2[i]._id,
-            { selected: true },
-            { new: true }
-          );
-        }
       }
       res.status(200).json(questionnairesStep1And2);
     } else {
       res.status(200).json(questionnairesStep1);
     }
   } catch (error) {
-    console.error("Error al obtener cuestionarios publicados:", error);
-    res
-      .status(500)
-      .json({ error: "Hubo un error al obtener cuestionarios publicados." });
+    res.status(500).json({
+      error: "Hubo un error al obtener cuestionarios publicados.",
+    });
   }
 };
 
 const getAdditionalQuestionnaires = async (req, res) => {
   try {
-    // Encuentra cuestionarios con criteria específica, por ejemplo, published true y steps 0
+    const { project_id } = req.params;
+
+    const questionnairesStep2 = await Questionnaire.find({
+      published: true,
+      steps: 2,
+    });
+
+    const hasResponsesStep2 = await Response.exists({
+      project_id,
+      questionnaire_id: { $in: questionnairesStep2.map((q) => q._id) },
+    });
+
+    if (!hasResponsesStep2) {
+      return res.status(404).json({
+        error:
+          "No se encontraron respuestas para cuestionarios con steps 2. No se pueden mostrar cuestionarios adicionales.",
+      });
+    }
+
     const additionalQuestionnaires = await Questionnaire.find({
       published: true,
       steps: 0,
-      selected: false,
     });
 
-    res.status(200).json(additionalQuestionnaires);
+    if (!additionalQuestionnaires || additionalQuestionnaires.length === 0) {
+      return res.status(404).json({
+        error: "No se encontraron cuestionarios adicionales.",
+      });
+    }
+
+   // Obtener cuestionarios adicionales con respuestas y sin respuestas para steps 0
+   const questionnairesWithResponses = [];
+   const questionnairesWithoutResponses = [];
+
+   for (const q of additionalQuestionnaires) {
+     const hasResponsesStep0 = await Response.exists({
+       project_id,
+       questionnaire_id: q._id,
+     });
+
+     const questionnaireData = { ...q.toObject(), hasResponsesStep0 };
+
+     if (hasResponsesStep0) {
+       questionnairesWithResponses.push(questionnaireData);
+     } else {
+       questionnairesWithoutResponses.push(questionnaireData);
+     }
+   }
+
+   res.status(200).json({
+     questionnairesWithResponses,
+     questionnairesWithoutResponses,
+   });
   } catch (error) {
-    console.error('Error al obtener cuestionarios adicionales:', error);
-    res.status(500).json({ error: 'Hubo un error al obtener cuestionarios adicionales.' });
+    res.status(500).json({
+      error: "Hubo un error al obtener cuestionarios adicionales.",
+    });
   }
 };
 
 const selectAdditionalQuestionnaire = async (req, res) => {
   try {
-    const { projectId } = req.params;
+    const { project_id } = req.params;
     const { selectedId } = req.body;
 
-    // Desmarca todos los cuestionarios asociados al proyecto
-    await Questionnaire.updateMany({ project_id: projectId }, { selected: false });
+    const selectedQuestionnaire = await Questionnaire.find({
+      _id: selectedId,
+      published: true,
+      steps: 0,
+    });
 
-    // Marca como seleccionado el cuestionario adicional
-    await Questionnaire.findByIdAndUpdate(selectedId, { selected: true });
+    if (!selectedQuestionnaire) {
+      return res.status(404).json({
+        error: "No se encontró cuestionario adicional.",
+      });
+    }
+    console.log(selectedQuestionnaire);
 
-    res.status(200).json({ message: 'Cuestionario adicional seleccionado con éxito.' });
+    const hasResponses = await Response.exists({
+      project_id,
+      questionnaire_id: selectedId,
+    });
+
+    if (!hasResponses) {
+      console.log("No hay respuestas");
+      res.status(200).json(selectedQuestionnaire);
+    } else {
+      console.log("Hay respuestas");
+      console.log(hasResponses);
+
+      return res.status(400).json({
+        error:
+          "Ya hay respuestas para el cuestionario seleccionado. No se pueden mostrar cuestionarios adicionales.",
+      });
+    }
   } catch (error) {
-    console.error('Error al seleccionar cuestionario adicional:', error);
-    res.status(500).json({ error: 'Hubo un error al seleccionar cuestionario adicional.' });
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Hubo un error al seleccionar cuestionario adicional." });
   }
 };
-
 
 const updateQuestionnaireByIdInPublishedOrUnpublished = async (req, res) => {
   try {
@@ -160,11 +229,9 @@ const updateQuestionnaireByIdSteps = async (req, res) => {
       });
 
       if (existingQuestionnaireWithStep) {
-        return res
-          .status(400)
-          .json({
-            message: `El paso ${steps} ya está siendo utilizado en otro cuestionario.`,
-          });
+        return res.status(400).json({
+          message: `El paso ${steps} ya está siendo utilizado en otro cuestionario.`,
+        });
       }
     }
 

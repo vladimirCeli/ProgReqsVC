@@ -61,16 +61,6 @@ const RequirementModal = ({
             className="w-full border border-gray-300 rounded p-3 mt-2"
           />
           <input
-            id="characteristicsr"
-            type="text"
-            placeholder="Características"
-            name="characteristicsr"
-            value={newRequirement.characteristicsr}
-            onChange={changeRequirements}
-            required
-            className="w-full border border-gray-300 rounded p-3 mt-2"
-          />
-          <input
             id="description"
             type="text"
             placeholder="Descripción"
@@ -78,15 +68,6 @@ const RequirementModal = ({
             value={newRequirement.description}
             onChange={changeRequirements}
             required
-            className="w-full border border-gray-300 rounded p-3 mt-2"
-          />
-          <input
-            id="req_no_funtional"
-            type="text"
-            placeholder="Requerimiento no funcional"
-            name="req_no_funtional"
-            value={newRequirement.req_no_funtional}
-            onChange={changeRequirements}
             className="w-full border border-gray-300 rounded p-3 mt-2"
           />
           <select

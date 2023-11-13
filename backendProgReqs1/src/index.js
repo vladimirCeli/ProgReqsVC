@@ -34,6 +34,7 @@ require('./model/Projects.model.js')
 require('./model/Requirements.model.js')
 require('./model/RequirementsRequirementsSecurity.model.js')
 require('./model/Task.model.js')
+require('./model/RequirementsNotFuntionals.js')
 const Person = require('./model/Person.model.js')
 //app.use(cookieParser());
 

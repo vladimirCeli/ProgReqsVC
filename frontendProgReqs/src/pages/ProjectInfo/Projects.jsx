@@ -10,11 +10,13 @@ import {
   projectsbyid,
   questionnairesPublished,
   getResponseByProjectIdApi,
+  requirementsNotFunctional,
 } from "../../Services/Fetch";
 
 import ProjectsQuestionnaires from "../../components/ProjectInfo/ProjectsQuestionnaires";
 import ProjectsInfo from "../../components/ProjectInfo/ProjectsInfo";
 import RequirementsProjects from "../../components/ProjectInfo/ProjectsRequirements";
+import RequirementsNotFunctionalProjects from "../../components/ProjectInfo/ProjectsRequirementsNotFunctional";
 
 export default function Projects() {
   const { toast } = useToast();
@@ -35,6 +37,14 @@ export default function Projects() {
     priority_req: "",
   });
 
+  const [requirementsNotFuntional, setRequirementsNotFuntional] = useState([]);
+  const [newRequirementsNotFuntional, setNewRequirementsNotFuntional] = useState({
+    ident_requirement_id: "",
+    name: "",
+    description: "",
+    priority_req: "",
+  });
+
   const [questionnaires, setQuestionnaires] = useState({
     name: "",
   });
@@ -48,6 +58,7 @@ export default function Projects() {
 
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [editingIdNotFunctionals, setEditingIdNotFunctionals] = useState(null);
   const navigate = useNavigate();
   const [errors, setErrors] = useState("");
   const params = useParams();
@@ -108,6 +119,60 @@ export default function Projects() {
     }
   };
 
+  const submitRequirementsNotFunctionals = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (editingIdNotFunctionals) {
+        const response = await fetch(requirementtoedit + editingIdNotFunctionals, {
+          method: "PUT",
+          body: JSON.stringify(newRequirementsNotFuntional),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+        if (response.ok) {
+          toast.success(data.message);
+        } else {
+          toast.error(data.message);
+        }
+        setEditingIdNotFunctionals(null);
+      } else {
+        const idproject = params.id;
+        const requirementsWithProjectId = {
+          ...newRequirementsNotFuntional,
+          project_id: idproject,
+        };
+
+        const response = await fetch(requirementstoprojects, {
+          method: "POST",
+          body: JSON.stringify(requirementsWithProjectId),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+        if (response.ok) {
+          toast.success(data.message);
+        } else {
+          toast.error(data.message);
+        }
+      }
+      setLoading(false);
+      setNewRequirementsNotFuntional({
+        ident_requirement_id: "",
+        name: "",
+        description: "",
+        priority_req: "",
+      });
+      loadRequirementsNotFunctionals(params.id);
+      handleCloseNotFunctionals();
+    } catch (error) {
+      console.error("Error al agregar los requisitos:", error.message);
+    }
+  };
+
   const handleDelete = async (id) => {
     try {
       const response = await fetch(requirementtoedit + id, {
@@ -126,6 +191,7 @@ export default function Projects() {
         setDeleteModalOpen(false);
       }
       loadRequirements(params.id);
+      loadRequirementsNotFunctionals(params.id);
     } catch (error) {
       console.error("Error al eliminar el requisito:", error.message);
     }
@@ -134,6 +200,13 @@ export default function Projects() {
   const changeRequirements = (e) => {
     setNewRequirement({
       ...newRequirement,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const changeRequirementsNotFunctionals = (e) => {
+    setNewRequirementsNotFuntional({
+      ...newRequirementsNotFuntional,
       [e.target.name]: e.target.value,
     });
   };
@@ -153,6 +226,21 @@ export default function Projects() {
     }
   };
 
+  const loadRequirementsNotFunctionals = async (project_id) => {
+    try {
+      const response = await fetch(requirementsNotFunctional + project_id);
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        setRequirementsNotFuntional(data);
+      } else {
+        setErrors(data.message);
+        setRequirementsNotFuntional([]);
+      }
+    } catch (error) {
+      console.error("Error al cargar los requisitos:", error);
+    }
+  }
+
   const handleEdit = (id) => {
     const requirementToEdit = requirements.find(
       (requirement) => requirement.id === id
@@ -163,6 +251,17 @@ export default function Projects() {
       handleOpen();
     }
   };
+
+  const handleEditNotFunctionals = (id) => {
+    const requirementToEdit = requirementsNotFuntional.find(
+      (requirement) => requirement.id === id
+    );
+    if (requirementToEdit) {
+      setEditingIdNotFunctionals(id);
+      setNewRequirementsNotFuntional(requirementToEdit);
+      handleOpenNotFunctionals();
+    }
+  }
 
   useEffect(() => {
     const loadQuestionnaire = async () => {
@@ -180,16 +279,32 @@ export default function Projects() {
             questionnairesStep1
           );
 
+          let selectedQuestionnaires;
+
           if (hasResponsesStep1) {
             const questionnairesStep1And2 = data.filter(
               (q) => q.steps === 1 || q.steps === 2
             );
             await checkResponses(project_id, questionnairesStep1And2);
+            selectedQuestionnaires = questionnairesStep1And2;
 
-            setQuestionnaires(questionnairesStep1And2);
+            const hasResponsesStep2 = await checkResponses(
+              project_id,
+              questionnairesStep1And2
+            );
+
+            if (hasResponsesStep2) {
+              const questionnairesStep1And2And3 = data.filter(
+                (q) => q.steps === 1 || q.steps === 2 || q.steps === 0
+              );
+              await checkResponses(project_id, questionnairesStep1And2And3);
+              selectedQuestionnaires = questionnairesStep1And2And3;
+            }
           } else {
-            setQuestionnaires(questionnairesStep1);
+            selectedQuestionnaires = questionnairesStep1;
           }
+          console.log("selectedQuestionnaires", selectedQuestionnaires);
+          setQuestionnaires(selectedQuestionnaires);
         } else {
           setQuestionnaires([]);
         }
@@ -238,14 +353,23 @@ export default function Projects() {
     if (params.id) {
       loadProject(params.id);
       loadRequirements(params.id);
+      loadRequirementsNotFunctionals(params.id);
       loadQuestionnaire();
     }
-  }, []);
+  }, [params.id]);
 
   const [open, setOpen] = useState(false);
+
+  const [openNotFunctional, setOpenNotFunctional] = useState(false);
+
   const handleOpen = () => {
     setOpen(true);
   };
+
+  const handleOpenNotFunctionals = () => {
+    setOpenNotFunctional(true);
+  }
+
   const handleClose = () => {
     setOpen(false);
     if (editingId !== null) {
@@ -260,6 +384,19 @@ export default function Projects() {
       });
     }
   };
+
+  const handleCloseNotFunctionals = () => {
+    setOpenNotFunctional(false);
+    if (editingIdNotFunctionals !== null) {
+      setEditingIdNotFunctionals(null);
+      setNewRequirementsNotFuntional({
+        ident_requirement_id: "",
+        name: "",
+        description: "",
+        priority_req: "",
+      });
+    }
+  }
 
   return (
     <div className="">
@@ -281,6 +418,13 @@ export default function Projects() {
           submitRequirements={submitRequirements}
           loading={loading}
           editingId={editingId}
+          editingIdNotFunctionals={editingIdNotFunctionals}
+          openNotFunctional={openNotFunctional}
+          handleOpenNotFunctionals={handleOpenNotFunctionals}
+          handleCloseNotFunctionals={handleCloseNotFunctionals}
+          newRequirementsNotFuntional={newRequirementsNotFuntional}
+          changeRequirementsNotFunctionals={changeRequirementsNotFunctionals}
+          submitRequirementsNotFunctionals={submitRequirementsNotFunctionals}
         />
 
         <RequirementsProjects
@@ -291,11 +435,23 @@ export default function Projects() {
           handleEdit={handleEdit}
           errors={errors}
         />
+
+        <RequirementsNotFunctionalProjects
+          requirements={requirementsNotFuntional}
+          moment={moment}
+          navigate={navigate}
+          handleDelete={handleDeleteConfirmation}
+          handleEdit={handleEditNotFunctionals}
+          errors={errors}
+        />
+
+
         <Modal
           open={deleteModalOpen}
           onClose={() => setDeleteModalOpen(false)}
           onDelete={() => handleDelete(reqToDeleteId)}
         />
+        
       </div>
     </div>
   );

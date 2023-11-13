@@ -6,6 +6,7 @@ import { projectsbypersonid, projectsbyid } from "../../Services/Fetch";
 import CardProject from "../../components/Projects/CardProject";
 import Modal from "../../components/Modal/DeleteConfirmationModal";
 import useToast from "../../hooks/useToast";
+import Footer from "../../components/Home/Footer";
 
 const ProjectsList = () => {
   const { toast } = useToast();

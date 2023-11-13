@@ -22,6 +22,8 @@ export const requirementtoedit = `${baseURl}/requirements/`;
 
 export const requirementstoprojectsbyid = `${baseURl}/requirements/project/`;
 
+export const requirementsNotFunctional = `${baseURl}/requirements/notfunctional/`;
+
 export const categoriesApi = `${baseURl}/categorie`;
 
 export const categoriesbyidApi = `${baseURl}/categorie/`;
@@ -48,9 +50,9 @@ export const questionnairesEditPublished = `${baseURl}/questionnaire/editpublish
 
 export const questionnairesEditSteps = `${baseURl}/questionnaire/editsteps/`;
 
-export const questionnairesAdditional = `${baseURl}/questionnaire/additional`;
+export const questionnairesAdditional = `${baseURl}/questionnaire/additional/`;
 
-export const questionnairesAdditionalProject = `${baseURl}/questionnaire/additional/`;
+export const questionnairesAdditionalProject = `${baseURl}/questionnaire/add/`;
 
 export const questionApi = `${baseURl}/question`;
 
