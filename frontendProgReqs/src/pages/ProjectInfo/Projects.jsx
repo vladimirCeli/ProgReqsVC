@@ -11,6 +11,7 @@ import {
   questionnairesPublished,
   getResponseByProjectIdApi,
   requirementsNotFunctional,
+  projectsbyprogressid,
 } from "../../Services/Fetch";
 
 import ProjectsQuestionnaires from "../../components/ProjectInfo/ProjectsQuestionnaires";
@@ -19,6 +20,7 @@ import RequirementsProjects from "../../components/ProjectInfo/ProjectsRequireme
 import RequirementsNotFunctionalProjects from "../../components/ProjectInfo/ProjectsRequirementsNotFunctional";
 
 export default function Projects() {
+  const [projectProgress, setProjectProgress] = useState(null);
   const { toast } = useToast();
   const [project, setProject] = useState({
     name: "",
@@ -38,12 +40,13 @@ export default function Projects() {
   });
 
   const [requirementsNotFuntional, setRequirementsNotFuntional] = useState([]);
-  const [newRequirementsNotFuntional, setNewRequirementsNotFuntional] = useState({
-    ident_requirement_id: "",
-    name: "",
-    description: "",
-    priority_req: "",
-  });
+  const [newRequirementsNotFuntional, setNewRequirementsNotFuntional] =
+    useState({
+      ident_requirement_id: "",
+      name: "",
+      description: "",
+      priority_req: "",
+    });
 
   const [questionnaires, setQuestionnaires] = useState({
     name: "",
@@ -62,6 +65,7 @@ export default function Projects() {
   const navigate = useNavigate();
   const [errors, setErrors] = useState("");
   const params = useParams();
+  const [hasResponsesSteps2Q, setHasResponsesSteps2Q] = useState(false);
 
   const submitRequirements = async (e) => {
     e.preventDefault();
@@ -124,13 +128,16 @@ export default function Projects() {
     setLoading(true);
     try {
       if (editingIdNotFunctionals) {
-        const response = await fetch(requirementtoedit + editingIdNotFunctionals, {
-          method: "PUT",
-          body: JSON.stringify(newRequirementsNotFuntional),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          requirementtoedit + editingIdNotFunctionals,
+          {
+            method: "PUT",
+            body: JSON.stringify(newRequirementsNotFuntional),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
         const data = await response.json();
         if (response.ok) {
           toast.success(data.message);
@@ -239,7 +246,7 @@ export default function Projects() {
     } catch (error) {
       console.error("Error al cargar los requisitos:", error);
     }
-  }
+  };
 
   const handleEdit = (id) => {
     const requirementToEdit = requirements.find(
@@ -261,7 +268,7 @@ export default function Projects() {
       setNewRequirementsNotFuntional(requirementToEdit);
       handleOpenNotFunctionals();
     }
-  }
+  };
 
   useEffect(() => {
     const loadQuestionnaire = async () => {
@@ -292,6 +299,19 @@ export default function Projects() {
               project_id,
               questionnairesStep1And2
             );
+
+            if (hasResponsesStep2) {
+              const questionnairesteps2 = data.filter((q) => q.steps === 2);
+              const responsesallStep2 = await checkResponses(
+                project_id,
+                questionnairesteps2
+              );
+              if (responsesallStep2) {
+                setHasResponsesSteps2Q(true);
+              } else {
+                setHasResponsesSteps2Q(false);
+              }
+            }
 
             if (hasResponsesStep2) {
               const questionnairesStep1And2And3 = data.filter(
@@ -350,11 +370,24 @@ export default function Projects() {
         console.error("Error al cargar los proyectos:", error);
       }
     };
+
+    const fetchProjectProgress = async () => {
+      try {
+        const response = await fetch(projectsbyprogressid + params.id);
+        const data = await response.json();
+
+        setProjectProgress(data);
+      } catch (error) {
+        console.error("Error al obtener el progreso del proyecto:", error);
+      }
+    };
+
     if (params.id) {
       loadProject(params.id);
       loadRequirements(params.id);
       loadRequirementsNotFunctionals(params.id);
       loadQuestionnaire();
+      fetchProjectProgress();
     }
   }, [params.id]);
 
@@ -368,7 +401,7 @@ export default function Projects() {
 
   const handleOpenNotFunctionals = () => {
     setOpenNotFunctional(true);
-  }
+  };
 
   const handleClose = () => {
     setOpen(false);
@@ -396,7 +429,7 @@ export default function Projects() {
         priority_req: "",
       });
     }
-  }
+  };
 
   return (
     <div className="">
@@ -406,52 +439,80 @@ export default function Projects() {
           paramsId={params.id}
           navigate={navigate}
         />
+        {hasResponsesSteps2Q ? (
+          <>
+            {projectProgress && projectProgress.requirements ? (
+              <div>
+                <p>Progreso del Proyecto: {projectProgress.progress}%</p>
+                {projectProgress.requirements.map((requirement) => (
+                  <div key={requirement.id}>
+                    <p>
+                      Progreso del Requisito "{requirement.name}":{" "}
+                      {requirement.progress}%
+                    </p>
+                    {/* Puedes mostrar más detalles sobre el requisito aquí */}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>Cargando...</p>
+            )}
 
-        <ProjectsInfo
-          project={project}
-          handleOpen={handleOpen}
-          moment={moment}
-          open={open}
-          handleClose={handleClose}
-          newRequirement={newRequirement}
-          changeRequirements={changeRequirements}
-          submitRequirements={submitRequirements}
-          loading={loading}
-          editingId={editingId}
-          editingIdNotFunctionals={editingIdNotFunctionals}
-          openNotFunctional={openNotFunctional}
-          handleOpenNotFunctionals={handleOpenNotFunctionals}
-          handleCloseNotFunctionals={handleCloseNotFunctionals}
-          newRequirementsNotFuntional={newRequirementsNotFuntional}
-          changeRequirementsNotFunctionals={changeRequirementsNotFunctionals}
-          submitRequirementsNotFunctionals={submitRequirementsNotFunctionals}
-        />
+            <ProjectsInfo
+              project={project}
+              handleOpen={handleOpen}
+              moment={moment}
+              open={open}
+              handleClose={handleClose}
+              newRequirement={newRequirement}
+              changeRequirements={changeRequirements}
+              submitRequirements={submitRequirements}
+              loading={loading}
+              editingId={editingId}
+              editingIdNotFunctionals={editingIdNotFunctionals}
+              openNotFunctional={openNotFunctional}
+              handleOpenNotFunctionals={handleOpenNotFunctionals}
+              handleCloseNotFunctionals={handleCloseNotFunctionals}
+              newRequirementsNotFuntional={newRequirementsNotFuntional}
+              changeRequirementsNotFunctionals={
+                changeRequirementsNotFunctionals
+              }
+              submitRequirementsNotFunctionals={
+                submitRequirementsNotFunctionals
+              }
+            />
 
-        <RequirementsProjects
-          requirements={requirements}
-          moment={moment}
-          navigate={navigate}
-          handleDelete={handleDeleteConfirmation}
-          handleEdit={handleEdit}
-          errors={errors}
-        />
+            <RequirementsProjects
+              requirements={requirements}
+              moment={moment}
+              navigate={navigate}
+              handleDelete={handleDeleteConfirmation}
+              handleEdit={handleEdit}
+              errors={errors}
+            />
 
-        <RequirementsNotFunctionalProjects
-          requirements={requirementsNotFuntional}
-          moment={moment}
-          navigate={navigate}
-          handleDelete={handleDeleteConfirmation}
-          handleEdit={handleEditNotFunctionals}
-          errors={errors}
-        />
+            <RequirementsNotFunctionalProjects
+              requirements={requirementsNotFuntional}
+              moment={moment}
+              navigate={navigate}
+              handleDelete={handleDeleteConfirmation}
+              handleEdit={handleEditNotFunctionals}
+              errors={errors}
+            />
 
-
-        <Modal
-          open={deleteModalOpen}
-          onClose={() => setDeleteModalOpen(false)}
-          onDelete={() => handleDelete(reqToDeleteId)}
-        />
-        
+            <Modal
+              open={deleteModalOpen}
+              onClose={() => setDeleteModalOpen(false)}
+              onDelete={() => handleDelete(reqToDeleteId)}
+            />
+          </>
+        ) : (
+          <p className="text-lg text-center text-gray-600 my-4">
+            <span className="font-bold">¡Esperamos tus respuestas!</span>{" "}
+            Completa los cuestionarios para continuar con el ingreso de los
+            requisitos del proyecto.
+          </p>
+        )}
       </div>
     </div>
   );

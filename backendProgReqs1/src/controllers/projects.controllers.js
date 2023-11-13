@@ -1,5 +1,6 @@
 const Project = require("../model/Projects.model"); // Asegúrate de importar el modelo correcto
 const Requirement = require("../model/Requirements.model"); // Importa el modelo Requirement
+const Task = require("../model/Task.model")
 
 const getAllProjects = async (req, res, next) => {
   try {
@@ -22,6 +23,49 @@ const getProject = async (req, res) => {
     res.status(200).json(project);
   } catch (error) {
     res.status(404).json({ message: "Error al obtener el proyecto" });
+  }
+};
+
+// En tu controlador o ruta del proyecto
+const getProjectWithProgress = async (req, res) => {
+  try {
+    const projectId = req.params.id;
+    const project = await Project.findByPk(req.params.id);
+   
+    if (!project) {
+      return res.status(404).json({ message: "No existe el proyecto" });
+    }
+
+    console.log("el proyecto"+project);
+
+    const requirements = await Requirement.findAll({
+      where: { project_id: projectId },
+    });
+
+    if (requirements.length === 0) {
+      return res.status(404).json({ message: "No existen requerimientos para este proyecto" });
+    }
+
+    const tasks = await Task.findAll({
+      where: { requirement_id: requirements.map((requirement) => requirement.id) },
+    });
+
+    if (tasks.length === 0) {
+      return res.status(404).json({ message: "No existen tareas para este proyecto" });
+    }
+
+    const totalTasks = tasks.length;
+
+    const completedTasks = tasks.filter((task) => task.completed).length;
+    console.log("tareas completadas"+completedTasks);
+    const progress = (completedTasks / totalTasks) * 100;
+
+
+    console.log("el progreso"+progress);
+    res.status(200).json(progress);
+  } catch (error) {
+    console.error("Error al obtener el proyecto con progreso:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
   }
 };
 
@@ -120,6 +164,7 @@ module.exports = {
   getAllProjects,
   getProject,
   getProjectByPerson,
+  getProjectWithProgress,
   createProject,
   deleteProject,
   updateProject,

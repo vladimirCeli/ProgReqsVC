@@ -16,6 +16,8 @@ export const projectsbyid = `${baseURl}/projects/`;
 
 export const projectsbypersonid = `${baseURl}/projects/person/`;
 
+export const projectsbyprogressid = `${baseURl}/projects/progress/`;
+
 export const requirementstoprojects = `${baseURl}/requirements`
 
 export const requirementtoedit = `${baseURl}/requirements/`;
