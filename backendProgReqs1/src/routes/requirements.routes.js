@@ -1,11 +1,13 @@
 const {Router} = require('express')
-const { getAllRequirements, getRequirement, getRequirementByProject, getRequirementNotFunctionalByProject, createRequirement, deleteRequirement, updateRequirement } = require('../controllers/requirements.controllers')
+const { getAllRequirements, getRequirement, checkRequirementNoFuntional, getRequirementByProject, getRequirementNotFunctionalByProject, createRequirement, deleteRequirement, updateRequirement } = require('../controllers/requirements.controllers')
 
 const router = Router()
 
 router.get('/requirements', getAllRequirements )
 
 router.get('/requirements/:id', getRequirementByProject )
+
+router.get('/requirements/check/:id', checkRequirementNoFuntional )
 
 router.get('/requirements/notfunctional/:id', getRequirementNotFunctionalByProject )
 

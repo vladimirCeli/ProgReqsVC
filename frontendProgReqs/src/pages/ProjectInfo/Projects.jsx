@@ -199,6 +199,7 @@ export default function Projects() {
       }
       loadRequirements(params.id);
       loadRequirementsNotFunctionals(params.id);
+      fetchProjectProgress();
     } catch (error) {
       console.error("Error al eliminar el requisito:", error.message);
     }
@@ -267,6 +268,17 @@ export default function Projects() {
       setEditingIdNotFunctionals(id);
       setNewRequirementsNotFuntional(requirementToEdit);
       handleOpenNotFunctionals();
+    }
+  };
+
+  const fetchProjectProgress = async () => {
+    try {
+      const response = await fetch(projectsbyprogressid + params.id);
+      const data = await response.json();
+      const convertedNumber = parseFloat(data);
+      setProjectProgress(convertedNumber);
+    } catch (error) {
+      console.error("Error al obtener el progreso del proyecto:", error);
     }
   };
 
@@ -371,17 +383,6 @@ export default function Projects() {
       }
     };
 
-    const fetchProjectProgress = async () => {
-      try {
-        const response = await fetch(projectsbyprogressid + params.id);
-        const data = await response.json();
-
-        setProjectProgress(data);
-      } catch (error) {
-        console.error("Error al obtener el progreso del proyecto:", error);
-      }
-    };
-
     if (params.id) {
       loadProject(params.id);
       loadRequirements(params.id);
@@ -441,22 +442,45 @@ export default function Projects() {
         />
         {hasResponsesSteps2Q ? (
           <>
-            {projectProgress && projectProgress.requirements ? (
-              <div>
-                <p>Progreso del Proyecto: {projectProgress.progress}%</p>
-                {projectProgress.requirements.map((requirement) => (
-                  <div key={requirement.id}>
-                    <p>
-                      Progreso del Requisito "{requirement.name}":{" "}
-                      {requirement.progress}%
-                    </p>
-                    {/* Puedes mostrar más detalles sobre el requisito aquí */}
+            <div>
+              {projectProgress ? (
+                <div>
+                  <div className="relative pt-1">
+                    <div className="flex mb-2 items-center justify-between">
+                      <div>
+                        <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-teal-600 bg-teal-200">
+                          {typeof projectProgress === "number" &&
+                          !isNaN(projectProgress) ? (
+                            <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-teal-600 bg-teal-200">
+                              {projectProgress.toFixed(2)}%
+                            </span>
+                          ) : (
+                            <p>
+                              El progreso del proyecto no es un número válido.
+                            </p>
+                          )}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs font-semibold inline-block text-teal-600">
+                          {projectProgress === 100 ? "Completo" : "En progreso"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex">
+                      <div className="flex-grow overflow-hidden h-2 mb-4 text-xs flex rounded bg-teal-200">
+                        <div
+                          style={{ width: `${projectProgress}%` }}
+                          className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-teal-500"
+                        ></div>
+                      </div>
+                    </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p>Cargando...</p>
-            )}
+                </div>
+              ) : (
+                <p>Aún no hay requisitos completados...</p>
+              )}
+            </div>
 
             <ProjectsInfo
               project={project}
@@ -510,7 +534,7 @@ export default function Projects() {
           <p className="text-lg text-center text-gray-600 my-4">
             <span className="font-bold">¡Esperamos tus respuestas!</span>{" "}
             Completa los cuestionarios para continuar con el ingreso de los
-            requisitos del proyecto.
+            requisitos del proyecto {project.name}.
           </p>
         )}
       </div>

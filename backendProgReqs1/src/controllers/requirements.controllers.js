@@ -40,6 +40,22 @@ const getRequirementNotFunctionalByProject = async (req, res, next) => {
   }
 };
 
+const checkRequirementNoFuntional = async (req, res, next) => {
+  const { id } = req.params;
+  const requirement = await Requirement.findByPk(id);
+  if (!requirement) {
+    return res.status(404).json({ message: "No existe el requerimiento" });
+  }
+
+  if (requirement.req_no_funtional === null) {
+    const isNotFuntional = true;
+    return res.status(200).json({ isNotFuntional });
+  } else {
+    const isNotFuntional = false;
+    return res.status(200).json({ isNotFuntional });
+  }
+};
+
 const getRequirement = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -144,6 +160,7 @@ const updateRequirement = async (req, res, next) => {
 module.exports = {
   getAllRequirements,
   getRequirement,
+  checkRequirementNoFuntional,
   createRequirement,
   deleteRequirement,
   updateRequirement,

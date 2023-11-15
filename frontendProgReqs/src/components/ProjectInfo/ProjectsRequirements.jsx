@@ -18,7 +18,7 @@ const RequirementsProjects = ({
               <div className="bg-white rounded-lg shadow-md p-4 transition duration-300 ease-in-out transform hover:scale-105 text-center bg-opacity-75">
                 <div>
                   <p className="text-lg font-semibold">{requirement.name}</p>
-                  <p className="text-sm mt-2">{requirement.description}</p>
+                  <p className="text-sm mt-2">{requirement.description}</p>z
                   <p className="text-sm mt-2">
                     Requisito creado el:{" "}
                     {moment(requirement.created_at).format("DD/MM/YYYY")}

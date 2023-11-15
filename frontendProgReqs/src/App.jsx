@@ -16,7 +16,7 @@ import RequireAuth from "./components/RequireAuth";
 import ProjectsList from "./pages/Projects/ProjectsList";
 import ProjectForm from "./pages/Projects/Project";
 import Projects from "./pages/ProjectInfo/Projects";
-import Requirements from "./components/Requirements";
+import Requirements from "./pages/Requirements/Requirements";
 import ManageQuestionnaire from "./pages/Questionnaire/ManageQuestionnaire";
 import Questionnaire from "./pages/Questionnaire/Questionnaire";
 import Categories from "./pages/Categories/Categories";

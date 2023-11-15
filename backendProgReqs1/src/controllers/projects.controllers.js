@@ -1,6 +1,6 @@
 const Project = require("../model/Projects.model"); // Asegúrate de importar el modelo correcto
 const Requirement = require("../model/Requirements.model"); // Importa el modelo Requirement
-const Task = require("../model/Task.model")
+const Task = require("../model/Task.model");
 
 const getAllProjects = async (req, res, next) => {
   try {
@@ -31,37 +31,41 @@ const getProjectWithProgress = async (req, res) => {
   try {
     const projectId = req.params.id;
     const project = await Project.findByPk(req.params.id);
-   
+
     if (!project) {
       return res.status(404).json({ message: "No existe el proyecto" });
     }
 
-    console.log("el proyecto"+project);
+    console.log("el proyecto" + project);
 
     const requirements = await Requirement.findAll({
       where: { project_id: projectId },
     });
 
     if (requirements.length === 0) {
-      return res.status(404).json({ message: "No existen requerimientos para este proyecto" });
+      return res
+        .status(404)
+        .json({ message: "No existen requerimientos para este proyecto" });
     }
 
     const tasks = await Task.findAll({
-      where: { requirement_id: requirements.map((requirement) => requirement.id) },
+      where: {
+        requirement_id: requirements.map((requirement) => requirement.id),
+      },
     });
 
     if (tasks.length === 0) {
-      return res.status(404).json({ message: "No existen tareas para este proyecto" });
+      return res
+        .status(404)
+        .json({ message: "No existen tareas para este proyecto" });
     }
 
     const totalTasks = tasks.length;
 
     const completedTasks = tasks.filter((task) => task.completed).length;
-    console.log("tareas completadas"+completedTasks);
-    const progress = (completedTasks / totalTasks) * 100;
-
-
-    console.log("el progreso"+progress);
+    console.log("tareas completadas" + completedTasks);
+    const progress = parseFloat((completedTasks / totalTasks) * 100).toFixed(2);
+    console.log("progreso: " + progress);
     res.status(200).json(progress);
   } catch (error) {
     console.error("Error al obtener el proyecto con progreso:", error);
@@ -154,7 +158,9 @@ const updateProject = async (req, res) => {
       await project.createRequirements(requirements);
     }
 
-    res.status(200).json({ project, message: "Proyecto actualizado correctamente" });
+    res
+      .status(200)
+      .json({ project, message: "Proyecto actualizado correctamente" });
   } catch (error) {
     res.status(404).json({ message: "Error al actualizar el proyecto" });
   }

@@ -30,7 +30,9 @@
     "react-feather": "^2.0.10",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.17.0",
+    "react-slick": "^0.29.0",
     "react-toastify": "^9.1.3",
+    "slick-carousel": "^1.8.1",
     "wouter": "^2.12.0",
     "zxcvbn": "^4.4.2"
   },

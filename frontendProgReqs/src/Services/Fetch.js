@@ -26,6 +26,8 @@ export const requirementstoprojectsbyid = `${baseURl}/requirements/project/`;
 
 export const requirementsNotFunctional = `${baseURl}/requirements/notfunctional/`;
 
+export const requirementsCheck = `${baseURl}/requirements/check/`;
+
 export const categoriesApi = `${baseURl}/categorie`;
 
 export const categoriesbyidApi = `${baseURl}/categorie/`;
