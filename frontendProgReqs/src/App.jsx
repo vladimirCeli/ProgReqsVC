@@ -35,6 +35,7 @@ import Container from "./components/ContainerEle";
 import Footer from "./components/Home/Footer";
 import useAuth from "./hooks/useAuth";
 import useLogout from "./hooks/useLogout";
+import Spractices from "./components/SimulationsP"
 
 function App() {
   const { auth } = useAuth();
@@ -198,6 +199,9 @@ function App() {
             />
           </Route>
           <Route element={<RequireAuth allowedRoles={[2, 1]} />}>
+
+            <Route path="/simulation" element={<Spractices />} />
+
             <Route path="/listsprojects" element={<ProjectsList />} />
 
             <Route path="/selectreq/:id" element={<SelectReq />} />

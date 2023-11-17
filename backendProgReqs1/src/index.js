@@ -2,7 +2,8 @@ const express = require('express')
 const compression = require("compression");
 const app = express()
 app.use(compression());
-
+const apppractices = express()
+const PORTPRACTICES = 9000
 const morgan = require('morgan')
 const cors = require('cors')
 const corsOptions = require('./config/corsOptions')
@@ -12,7 +13,6 @@ const requirementsRoutes = require('./routes/requirements.routes')
 const tasks = require('./routes/tasks.routes')
 const person = require('./routes/person.routes')
 const { scheduleCleanupTask } = require('./config/Schedule')
-//const questionnaire = require('./routes/questionnaire/questionnaire.routes')
 const requirementsec = require('./routes/requirementssec.routes')
 const refreshTokens = require('./routes/refreshToken.routes')
 const auth = require('./routes/auth.routes')
@@ -36,8 +36,6 @@ require('./model/RequirementsRequirementsSecurity.model.js')
 require('./model/Task.model.js')
 require('./model/RequirementsNotFuntionals.js')
 const Person = require('./model/Person.model.js')
-//app.use(cookieParser());
-
 require('./config/mongodb')
 
 app.use(credentials)
@@ -72,9 +70,9 @@ app.use(require('./routes/questionnaire/response.routes'))
 app.use(verifyJWT)
 app.use(person)
 
-//app.use(questionnaire)
-
-
+apppractices.listen(PORTPRACTICES, () => {
+    console.log(`Server Practices On ${PORTPRACTICES}`)
+})
 
 async function main() {
     try {
