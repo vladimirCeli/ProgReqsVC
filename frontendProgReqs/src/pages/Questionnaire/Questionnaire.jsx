@@ -1,33 +1,21 @@
 import { useState, useEffect } from "react";
-import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  TextField,
-  Button,
-  CircularProgress,
-  Snackbar,
-  Alert,
-  Avatar,
-} from "@mui/material";
-import QuizIcon from "@mui/icons-material/Quiz";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { XCircleIcon } from "@heroicons/react/24/outline";
 import SelectQuestions from "../../components/Questionnaire/Select";
 import {
   fetchQuestionnaire,
   saveQuestionnaire,
 } from "../../components/Questionnaire/QuestionnaireFetch";
+import useToast from "../../hooks/useToast";
+
 const Questionnaire = () => {
+  const { toast } = useToast();
   const [questionnaire, setQuestionnaire] = useState({
     name: "",
     categories: [],
   });
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [color, setColor] = useState(null);
-  const [message, setMessage] = useState(null);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -58,67 +46,40 @@ const Questionnaire = () => {
     );
 
     if (result.error) {
-      setColor("error");
-      setMessage(result.error);
-      setSnackbarOpen(true);
+      toast.error(result.error);
     }
-  };
+    if (result.success) {
+      toast.success(result.success);
+    }
 
-  const handleCancel = () => {
-    navigate("/managequestionnaire");
-  };
-
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
   };
 
   return (
-    <>
-    <Grid
-      container
-      direction="column"
-      alignItems="center"
-      justifyContent="center"
-    >
-      <Grid item xs={3} md={6}>
-        <Card sx={{ mt: 5 }}>
-          <CardContent>
-            <Avatar 
-            sx={
-              {
-                mx: "auto",
-                mb: 2,
-                bgcolor: "#2E3B55",
-
-              }
-            }
-            >
-              <QuizIcon />
-            </Avatar>
-
-            <Typography variant="h6" align="center">
+    <section className="flex items-center justify-center text-white md:p-44">
+      <div className="w-96 bg-white rounded shadow-lg max-w-md p-8 space-y-6 bg-opacity-75 relative">
+        <Link to="/managequestionnaire" className="absolute top-2 right-2">
+          <button className="text-gray-500 hover:text-gray-700 focus:outline-none">
+            <XCircleIcon className="h-6 w-6" />
+          </button>
+        </Link>
+        <div className="flex flex-col items-center">
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-3xl mb-4 font-semibold text-center text-indigo-950">
               {editing ? "Editar cuestionario" : "Crear cuestionario"}
-            </Typography>
-
-            <TextField
-              variant="filled"
-              name="name"
-              label="Ingresa el nombre del cuestionario"
-              required
-              fullWidth
+            </h1>
+          </div>
+          <form className="w-full space-y-4">
+            <input
+              type="text"
+              placeholder="Nombre del cuestionario"
+              className="p-3 rounded border w-full focus:outline-none focus:border-indigo-950 text-black"
               autoFocus
-              sx={{
-                mb: 2,
-              }}
+              name="name"
               value={questionnaire.name}
               onChange={handleInputChange}
+              required
             />
-
-            <Typography variant="h6" align="center">Categorías</Typography>
-
-            
-
-            <SelectQuestions
+             <SelectQuestions
               multiline
               rows={4}
               sx={{
@@ -127,44 +88,21 @@ const Questionnaire = () => {
               questionnaire={questionnaire}
               setQuestionnaire={setQuestionnaire}
             />
-
-            <Button
-              variant="contained"
-              color="primary"
+            <button
+              type="submit"
+              className="text-white font-bold py-3 rounded w-full transition duration-300 ease-in-out"
+              disabled={loading}
+              style={{ backgroundColor: "#2c3e50" }}
+              onMouseOver={(e) => (e.target.style.backgroundColor = "#465669")}
+              onMouseLeave={(e) => (e.target.style.backgroundColor = "#2c3e50")}
               onClick={handleSaveQuestionnaire}
-              disabled={loading}
-              sx={{
-                mt: 2,
-              }}
             >
-              {loading ? <CircularProgress size={24} /> : "Guardar"}
-            </Button>
-
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleCancel}
-              disabled={loading}
-              sx={{
-                mt: 2,
-              }}
-            >
-              Cancelar
-            </Button>
-          </CardContent>
-        </Card>
-      </Grid>
-    </Grid>
-    <Snackbar
-    open={snackbarOpen}
-    autoHideDuration={4000} // Adjust as needed
-    onClose={handleCloseSnackbar}
-  >
-    <Alert severity={color} onClose={handleCloseSnackbar}>
-      {message}
-    </Alert>
-  </Snackbar>
-  </>
+              {editing ? "Guardar cambios" : "Guardar"}
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
   );
 };
 

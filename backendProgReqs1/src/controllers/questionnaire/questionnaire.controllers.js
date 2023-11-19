@@ -332,7 +332,7 @@ const createQuestionnaire = async (req, res) => {
       categories,
     });
     const savedQuestionnaire = await newQuestionnaire.save();
-    res.status(201).json(savedQuestionnaire);
+    res.status(201).json({ savedQuestionnaire, success: "Cuestionario creado correctamente" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Hubo un error al crear el cuestionario." });
@@ -366,7 +366,7 @@ const updateQuestionnaireById = async (req, res) => {
       return res.status(404).json({ error: "Cuestionario no encontrado." });
     }
 
-    res.status(200).json(updatedQuestionnaire);
+    res.status(200).json({ updatedQuestionnaire, success: "Cuestionario actualizado correctamente" });
   } catch (error) {
     console.error("Error al actualizar el cuestionario por ID:", error);
     res
@@ -384,7 +384,7 @@ const deleteQuestionnaireById = async (req, res) => {
     if (!deletedQuestionnaire) {
       return res.status(404).json({ error: "Cuestionario no encontrado." });
     }
-    res.status(204).send();
+    res.status(200).json({ success: "Cuestionario eliminado correctamente" });
   } catch (error) {
     console.error("Error al eliminar el cuestionario por ID:", error);
     res

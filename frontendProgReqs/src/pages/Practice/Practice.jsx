@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { Button, Container, Snackbar, Alert } from "@mui/material";
-
 import { subsectionsApi, subsectionsApiId } from "../../Services/Fetch";
 import ModalComponent from "../../components/Practice/PracticeForm";
 import TableComponent from "../../components/Practice/PracticeTable";
 import DeleteConfirmationModal from "../../components/Modal/DeleteConfirmationModal";
+import useToast from "../../hooks/useToast";
 
 const Questionnaire = () => {
+  const { toast } = useToast();
   const [practices, setPractices] = useState([]);
   const [practice, setPractice] = useState({
     name: "",
@@ -15,9 +15,6 @@ const Questionnaire = () => {
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [open, setOpen] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [color, setColor] = useState(null);
-  const [message, setMessage] = useState(null);
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [practiceToDeleteId, setPracticeToDeleteId] = useState(null);
@@ -41,14 +38,10 @@ const Questionnaire = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          setMessage(data.success);
-          setColor("success");
-          setSnackbarOpen(true);
+          toast.success(data.success);
         } else {
           const data = await response.json();
-          setMessage(data.error);
-          setColor("error");
-          setSnackbarOpen(true);
+          toast.error(data.error);
         }
         setEditingId(null);
       } else {
@@ -61,14 +54,10 @@ const Questionnaire = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          setMessage(data.success);
-          setColor("success");
-          setSnackbarOpen(true);
+          toast.success(data.success);
         } else {
           const data = await response.json();
-          setMessage(data.error);
-          setColor("error");
-          setSnackbarOpen(true);
+          toast.error(data.error);
         }
       }
       setLoading(false);
@@ -90,15 +79,11 @@ const Questionnaire = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        setMessage(data.success);
-        setColor("success");
-        setSnackbarOpen(true);
+        toast.success(data.success);
         setDeleteModalOpen(false);
       } else {
         const data = await response.json();
-        setMessage(data.error);
-        setColor("error");
-        setSnackbarOpen(true);
+        toast.error(data.error);
         setDeleteModalOpen(false);
       }
       loadPractices();
@@ -157,16 +142,25 @@ const Questionnaire = () => {
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  };
-
   return (
-    <Container maxWidth="lg" style={{ marginTop: "20px" }}>
-      <Button size="small" onClick={handleOpen}>
-        {editingId ? "Editar Práctica" : "Agregar Práctica"}
-      </Button>
-
+    <div>
+    <div className="container mx-auto">
+      <h1 className="text-4xl font-bold mb-4">Prácticas</h1>
+      <div className="m-5">
+      <button
+       className="text-white font-bold py-2 px-4 rounded"
+      onClick={handleOpen}
+      style={{ backgroundColor: "#2c3e50" }}
+      onMouseOver={(e) =>
+        (e.target.style.backgroundColor = "#465669")
+      }
+      onMouseLeave={(e) =>
+        (e.target.style.backgroundColor = "#2c3e50")
+      }
+      >
+        Nueva Práctica
+      </button>
+      </div>
       <ModalComponent
         open={open}
         handleClose={handleClose}
@@ -179,15 +173,6 @@ const Questionnaire = () => {
         editingId={editingId}
         handleOpen={handleOpen}
       />
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000} // Adjust as needed
-        onClose={handleCloseSnackbar}
-      >
-        <Alert severity={color} onClose={handleCloseSnackbar}>
-          {message}
-        </Alert>
-      </Snackbar>
 
       <TableComponent
         practices={practices}
@@ -200,7 +185,8 @@ const Questionnaire = () => {
         onClose={() => setDeleteModalOpen(false)}
         onDelete={() => handleDelete(practiceToDeleteId)}
       />
-    </Container>
+    </div>
+    </div>
   );
 };
 

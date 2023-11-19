@@ -38,7 +38,7 @@ const Home = () => {
                   </button>
                 </Link>
                 <Link to="/register">
-                  <button className="flex items-center space-x-2 bg-transparent border-2 border-white text-white font-bold py-2 px-4 rounded drop-shadow-xl transition duration-500 ease-in-out hover:bg-gray-100 hover:text-black">
+                  <button className="flex items-center space-x-2 bg-transparent border-2 border-[#1E1B4B] text-[#1E1B4B] font-bold py-2 px-4 rounded drop-shadow-xl transition duration-500 ease-in-out hover:bg-gray-100 hover:text-black">
                     Registrarse
                   </button>
                 </Link>
@@ -52,7 +52,8 @@ const Home = () => {
               <div className="absolute bottom-0 left-0 sm:bottom-5 sm:left-5 md:bottom-10 md:left-10 lg:bottom-20 lg:left-20 w-30 h-30 sm:w-72 sm:h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000 text-animation"></div>
               <div className="absolute top-0 right-0 sm:top-9 sm:right-9 md:top-0 md:right-0 lg:top-56 lg:right-56 w-30 h-30 sm:w-72 sm:h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob text-animation"></div>
               <div className="">
-                <Logo
+                <img
+                src="../../assets/logop.png"
                   width="460"
                   height="445"
                   className="w-full h-full s-animation scale-up relative z-10  logo-animation"

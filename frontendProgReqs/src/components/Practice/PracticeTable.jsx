@@ -1,51 +1,44 @@
-import React from "react";
-import { Table, TableBody, TableCell,Typography, TableContainer, TableHead, TableRow, Paper, Button } from "@mui/material";
-
+/* eslint-disable react/prop-types */
 const TableComponent = ({ practices, handleEdit, handleDelete }) => {
   return (
-    <div>
-      <Typography variant="h4">Prácticas</Typography>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Acciones</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
+    <div className="overflow-x-auto">
+     <table className="min-w-full bg-gray-800 text-white shadow-md rounded-lg overflow-hidden">
+        <thead className="bg-[#2c3e50]">
+          <tr>
+            <th className="py-3 px-4">#</th>
+            <th className="py-3 px-4">Práctica</th>
+            <th className="py-3 px-4">Acciones</th>
+          </tr>
+        </thead>
+          <tbody>
             {practices.length > 0 ? (
-              practices.map((q) => (
-                <TableRow key={q._id}>
-                  <TableCell>{q._id}</TableCell>
-                  <TableCell>{q.name}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outlined"
-                      color="primary"
+              practices.map((q, index) => (
+                <tr key={q._id} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-gray-300 transition-all duration-300'}>
+                <td className="py-2 px-4 text-black items-center justify-center text-center">{index + 1}</td>
+                <td className="py-2 px-4 text-black">{q.name}</td>
+                <td className="py-2 px-4 flex items-center text-center justify-center justify-items-center space-x-2">
+                    <button
+                     className="bg-yellow-600 hover:bg-yellow-400 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
                       onClick={() => handleEdit(q._id)}
                     >
                       Editar
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="secondary"
+                    </button>
+                    <button
+                      className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
                       onClick={() => handleDelete(q._id)}
                     >
                       Eliminar
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                    </button>
+                  </td>
+                </tr>
               ))
             ) : (
-              <TableRow>
-                <TableCell colSpan={3}>No hay prácticas</TableCell>
-              </TableRow>
+              <tr>
+                <td className="py-2 px-4" colSpan={3}>No hay prácticas</td>
+              </tr>
             )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          </tbody>
+      </table>
     </div>
   );
 };

@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+
 import Select from "../SelectQuestions";
 
 const SelectQuestions = ({ questionnaire, setQuestionnaire }) => {

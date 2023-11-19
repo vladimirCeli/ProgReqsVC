@@ -1,11 +1,5 @@
+/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
-import {
-  FormControl,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-} from "@mui/material";
-
 import { baseURLapi } from "../Services/Fetch";
 
 const SelectQuestions = ({ label, endpoint, campo, onChange, values, selectedQuestions }) => {
@@ -39,31 +33,30 @@ const SelectQuestions = ({ label, endpoint, campo, onChange, values, selectedQue
   const isQuestionChecked = (questionId) => values.includes(questionId);
 
   return (
-    <FormControl fullWidth sx={{ mb: 2 }}>
-      <FormGroup>
-        {questions.length > 0 ? (
-          questions.map((question) => {
-            const isQuestionSelected = selectedQuestions.includes(question._id);
-            return (
-              !isQuestionSelected && ( // Mostrar solo preguntas no seleccionadas en otras prácticas
-                <FormControlLabel
-                  key={question._id}
-                  control={
-                    <Checkbox
-                      checked={isQuestionChecked(question._id)}
-                      onChange={() => handleQuestionChange(question._id)}
-                    />
-                  }
-                  label={question[campo].toString()}
-                />
-              )
-            );
-          })
-        ) : (
-          <p>No hay {label}</p>
-        )}
-      </FormGroup>
-    </FormControl>
+    <div className="w-full mb-2">
+      {questions.length > 0 ? (
+        questions.map((question) => {
+          const isQuestionSelected = selectedQuestions.includes(question._id);
+          return (
+            !isQuestionSelected && ( // Mostrar solo preguntas no seleccionadas en otras prácticas
+              <div key={question._id} className="mb-2">
+                <label className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={isQuestionChecked(question._id)}
+                    onChange={() => handleQuestionChange(question._id)}
+                    className="mr-2"
+                  />
+                  <span>{question[campo].toString()}</span>
+                </label>
+              </div>
+            )
+          );
+        })
+      ) : (
+        <p>No hay {label}</p>
+      )}
+    </div>
   );
 };
 

@@ -23,9 +23,16 @@ const QuestionnairesList = () => {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(questionnairesbyidApi + id, {
+      const response = await fetch(questionnairesbyidApi + id, {
         method: "DELETE",
       });
+      if (response.ok) {
+        const data = await response.json();
+        toast.success(data.success);
+      } else {
+        const data = await response.json();
+        toast.error(data.error);
+      }
       loadProjects();
       setDeleteModalOpen(false);
     } catch (error) {

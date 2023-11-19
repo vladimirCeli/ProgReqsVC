@@ -27,7 +27,9 @@ export const saveQuestionnaire = async (questionnaire, editing, id, navigate, se
         });
   
         if (response.ok) {
+          const data = await response.json();
           navigate("/managequestionnaire");
+          return { success: data.success };
         } else {
           const data = await response.json();
           setLoading(false);
@@ -43,7 +45,9 @@ export const saveQuestionnaire = async (questionnaire, editing, id, navigate, se
         });
   
         if (response.ok) {
+          const data = await response.json();
           navigate("/managequestionnaire");
+          return { success: data.success };
         } else {
           const data = await response.json();
           setLoading(false);
@@ -54,8 +58,5 @@ export const saveQuestionnaire = async (questionnaire, editing, id, navigate, se
       console.error("Error al guardar el cuestionario:", error);
       return { error: "Error al guardar el cuestionario." };
     }
-  
-    setLoading(false);
-    return { success: "Cuestionario guardado correctamente." };
   };
   

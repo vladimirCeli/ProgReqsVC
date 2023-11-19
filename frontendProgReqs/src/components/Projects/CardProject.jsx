@@ -1,11 +1,10 @@
-import Footer from "../Home/Footer";
-import Container from "../Container";
+/* eslint-disable react/prop-types */
+
 
 const CardProject = ({ projects, handleDelete, navigate }) => {
   return (
-    <>
       <div className="relative">
-        <Container className="flex flex-wrap">
+        <div className="container p-8 mx-auto">
           <div className="">
           <h1 className="text-3xl font-bold mb-4 text-gray-800">
             Lista de proyectos
@@ -57,9 +56,8 @@ const CardProject = ({ projects, handleDelete, navigate }) => {
             <p className="text-lg mb-4 text-white">No hay proyectos</p>
           )}
           </div>
-        </Container>
       </div>
-    </>
+      </div>    
   );
 };
 

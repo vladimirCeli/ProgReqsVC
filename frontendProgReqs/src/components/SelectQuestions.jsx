@@ -1,12 +1,5 @@
-import { useState, useEffect } from "react";
-import {
-  FormControl,
-  InputLabel,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-} from "@mui/material";
-
+/* eslint-disable react/prop-types */
+import { useEffect, useState } from "react";
 import { baseURLapi } from "../Services/Fetch";
 
 const SelectQuestions = ({ label, endpoint, campo, onChange, values }) => {
@@ -40,27 +33,29 @@ const SelectQuestions = ({ label, endpoint, campo, onChange, values }) => {
   const isQuestionChecked = (questionId) => values.includes(questionId);
 
   return (
-    <FormControl fullWidth sx={{ mb: 2 }}>
-      <InputLabel></InputLabel>
-      <FormGroup>
+    <div className="mb-2">
+      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <div className="mt-1">
         {questions.length > 0 ? (
           questions.map((question) => (
-            <FormControlLabel
-              key={question._id}
-              control={
-                <Checkbox
-                  checked={isQuestionChecked(question._id)}
-                  onChange={() => handleQuestionChange(question._id)}
-                />
-              }
-              label={question[campo].toString()}
-            />
+            <div key={question._id} className="flex items-center">
+              <input
+                type="checkbox"
+                id={question._id}
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                checked={isQuestionChecked(question._id)}
+                onChange={() => handleQuestionChange(question._id)}
+              />
+              <label htmlFor={question._id} className="ml-2 block text-sm text-gray-900">
+                {question[campo].toString()}
+              </label>
+            </div>
           ))
         ) : (
           <p>No hay {label} disponibles</p>
         )}
-      </FormGroup>
-    </FormControl>
+      </div>
+    </div>
   );
 };
 

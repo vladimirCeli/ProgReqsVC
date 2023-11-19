@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
-import { Typography, Button,
-    Snackbar, 
-    Alert, Container } from "@mui/material";
 import { categoriesApi, categoriesbyidApi } from "../../Services/Fetch";
 import CategoryModal from "../../components/Categories/CategoryForm";
 import CategoryTable from "../../components/Categories/CategoryTable";
 import DeleteConfirmationModal from "../../components/Modal/DeleteConfirmationModal";
+import useToast from "../../hooks/useToast";
 
 const Categories = () => {
+  const { toast } = useToast();
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState({
     name: "",
@@ -16,9 +15,6 @@ const Categories = () => {
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [open, setOpen] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [color, setColor] = useState(null);
-  const [message, setMessage] = useState(null);
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [categoryToDeleteId, setCategoryToDeleteId] = useState(null);
@@ -42,14 +38,10 @@ const Categories = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          setMessage(data.success);
-          setColor("success");
-          setSnackbarOpen(true);
+          toast.success(data.success);
         } else {
-            const data = await response.json();
-            setMessage(data.error);
-            setColor("error");
-            setSnackbarOpen(true);
+          const data = await response.json();
+          toast.error(data.error);
         }
         setEditingId(null);
       } else {
@@ -62,14 +54,10 @@ const Categories = () => {
         });
         if (response.ok) {
           const data = await response.json();
-          setMessage(data.success);
-          setColor("success");
-          setSnackbarOpen(true);
+          toast.success(data.success);
         } else {
-            const data = await response.json();
-            setMessage(data.error);
-            setColor("error");
-            setSnackbarOpen(true);
+          const data = await response.json();
+          toast.error(data.error);
         }
       }
       setLoading(false);
@@ -91,28 +79,17 @@ const Categories = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        setMessage(data.success);
-        setColor("success");
-        setSnackbarOpen(true);
+        toast.success(data.success);
         setDeleteModalOpen(false);
-        } else {
-            const data = await response.json();
-            setMessage(data.error);
-            setColor("error");
-            setSnackbarOpen(true);
-            setDeleteModalOpen(false);
-        }
+      } else {
+        const data = await response.json();
+        toast.error(data.error);
+        setDeleteModalOpen(false);
+      }
       loadCategories();
     } catch (error) {
       console.error(error);
     }
-  };
-
-  const ChangeCategory = (e) => {
-    setCategory({
-      ...category,
-      [e.target.name]: e.target.value,
-    });
   };
 
   const loadCategories = async () => {
@@ -157,47 +134,44 @@ const Categories = () => {
     }
   };
 
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  };
-
   return (
-    <Container maxWidth="lg" style={{ marginTop: "20px" }}>
-      <Button size="small" onClick={handleOpen}>
-        {editingId ? "Editar Categoria" : "Agregar Categoria"}
-      </Button>
-      <CategoryModal
-        open={open}
-        handleClose={handleClose}
-        category={category}
-        setCategory={setCategory}
-        loading={loading}
-        submitCategory={submitCategory}
-        categories={categories}
-        editingId={editingId}
-        handleOpen={handleOpen}
-      />
-      <Typography variant="h4">Categorías</Typography>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000} // Adjust as needed
-        onClose={handleCloseSnackbar}
-      >
-        <Alert severity={color} onClose={handleCloseSnackbar}>
-          {message}
-        </Alert>
-      </Snackbar>
-      <CategoryTable
-        categories={categories}
-        handleEdit={handleEdit}
-        handleDelete={handleDeleteConfirmation}
-      />
-       <DeleteConfirmationModal
-        open={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        onDelete={() => handleDelete(categoryToDeleteId)}
-      />
-    </Container>
+    <div>
+      <div className="container mx-auto">
+        <h1 className="text-4xl font-bold mb-4">Categorías</h1>
+        <div className="m-5">
+          <button
+            onClick={handleOpen}
+            className="text-white font-bold py-2 px-4 rounded"
+            style={{ backgroundColor: "#2c3e50" }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#465669")}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = "#2c3e50")}
+          >
+            Nueva Categoria
+          </button>
+        </div>
+        <CategoryModal
+          open={open}
+          handleClose={handleClose}
+          category={category}
+          setCategory={setCategory}
+          loading={loading}
+          submitCategory={submitCategory}
+          categories={categories}
+          editingId={editingId}
+          handleOpen={handleOpen}
+        />
+        <CategoryTable
+          categories={categories}
+          handleEdit={handleEdit}
+          handleDelete={handleDeleteConfirmation}
+        />
+        <DeleteConfirmationModal
+          open={deleteModalOpen}
+          onClose={() => setDeleteModalOpen(false)}
+          onDelete={() => handleDelete(categoryToDeleteId)}
+        />
+      </div>
+    </div>
   );
 };
 

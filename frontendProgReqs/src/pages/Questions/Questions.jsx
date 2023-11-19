@@ -1,20 +1,20 @@
-import  { useState, useEffect } from "react";
-import { Button, Typography, Container, Snackbar, Alert } from "@mui/material";
-
+import { useState, useEffect } from "react";
 import { questionApi, questionbyidApi } from "../../Services/Fetch";
 import QuestionTable from "../../components/Questions/QuestionTable";
 import QuestionForm from "../../components/Questions/QuestionForm";
 import DeleteConfirmationModal from "../../components/Modal/DeleteConfirmationModal";
+import useToast from "../../hooks/useToast";
 
 const Questions = () => {
+  const { toast } = useToast();
   const [questions, setQuestions] = useState([]);
   const [newQuestion, setNewQuestion] = useState({
     question: "",
     options: [
-      { text: "", value: 0 },
-      { text: "", value: 0.25 },
-      { text: "", value: 0.5 },
-      { text: "", value: 1 },
+      { text: "", value: 0, placeholder: "Tiene un valor de 0" },
+      { text: "", value: 0.25, placeholder: "Tiene un valor de 0.25" },
+      { text: "", value: 0.5, placeholder: "Tiene un valor de 0.5" },
+      { text: "", value: 1, placeholder: "Tiene un valor de 1" },
     ],
   });
   const [editingQuestionId, setEditingQuestionId] = useState(null);
@@ -22,9 +22,6 @@ const Questions = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [message, setMessage] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [color, setColor] = useState(null);
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [questionToDeleteId, setQuestionToDeleteId] = useState(null);
@@ -38,7 +35,6 @@ const Questions = () => {
     setQuestionToDeleteId(id);
     setDeleteModalOpen(true);
   };
-  
 
   const fetchQuestions = async (page) => {
     try {
@@ -71,9 +67,7 @@ const Questions = () => {
       });
       if (response.ok) {
         const successData = await response.json();
-        setMessage(successData.success);
-        setColor("success");
-        setSnackbarOpen(true);
+        toast.success(successData.success);
         setIsModalOpen(false);
         fetchQuestions(currentPage);
         resetForm();
@@ -95,9 +89,7 @@ const Questions = () => {
 
       if (response.ok) {
         const successData = await response.json();
-        setMessage(successData.success);
-        setColor("success");
-        setSnackbarOpen(true);
+        toast.success(successData.success);
         setIsModalOpen(false);
         fetchQuestions(currentPage);
         resetForm();
@@ -106,18 +98,12 @@ const Questions = () => {
         fetchQuestions(currentPage);
         resetForm();
         const errorData = await response.json();
-        setMessage(errorData.error);
-        setColor("error");
-        setSnackbarOpen(true);
+        toast.error(errorData.error);
         console.error("Error al editar la pregunta:", response.statusText);
       }
     } catch (error) {
       console.error("Error al editar la pregunta:", error);
     }
-  };
-
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
   };
 
   const handleEditQuestion = (questionId) => {
@@ -149,16 +135,12 @@ const Questions = () => {
 
       if (response.ok) {
         const successData = await response.json();
-        setColor("success");
-        setMessage(successData.success);
-        setSnackbarOpen(true);
+        toast.success(successData.success);
         fetchQuestions(currentPage);
         setDeleteModalOpen(false);
       } else {
         const errorData = await response.json();
-        setColor("error");
-        setMessage(errorData.error);
-        setSnackbarOpen(true);
+        toast.error(errorData.error);
         fetchQuestions(currentPage);
         setDeleteModalOpen(false);
       }
@@ -177,10 +159,10 @@ const Questions = () => {
     setNewQuestion({
       question: "",
       options: [
-        { text: "", value: 0 },
-        { text: "", value: 0.25 },
-        { text: "", value: 0.5 },
-        { text: "", value: 1 },
+        { text: "", value: 0, placeholder: "Tiene un valor de 0" },
+        { text: "", value: 0.25, placeholder: "Tiene un valor de 0.25" },
+        { text: "", value: 0.5, placeholder: "Tiene un valor de 0.5" },
+        { text: "", value: 1, placeholder: "Tiene un valor de 1" },
       ],
     });
     setEditingQuestionId(null);
@@ -192,66 +174,68 @@ const Questions = () => {
   };
 
   return (
-    <Container maxWidth="lg" style={{ marginTop: "20px" }}>
-      {" "}
-      <Typography variant="h4">Preguntas</Typography>
-      <Typography variant="subtitle1">
-        Página {currentPage} de {totalPages}
-      </Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleCreateQuestion}
-      >
-        Nuevo
-      </Button>
-      <QuestionForm
-        isModalOpen={isModalOpen}
-        handleCancel={handleCancel}
-        newQuestion={newQuestion}
-        setNewQuestion={setNewQuestion}
-        isEditing={isEditing}
-        handleOptionChange={handleOptionChange}
-        createOrUpdateQuestion={createOrUpdateQuestion}
-      />
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000} // Adjust as needed
-        onClose={handleCloseSnackbar}
-      >
-        <Alert severity={color} onClose={handleCloseSnackbar}>
-          {message}
-        </Alert>
-      </Snackbar>
-      <QuestionTable
-        questions={questions}
-        handleEditQuestion={handleEditQuestion}
-        handleDeleteQuestion={handleDeleteConfirmation}
-      />
-      <DeleteConfirmationModal
-        open={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        onDelete={() => handleDeleteQuestion(questionToDeleteId)}
-      />
-      <div>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => goToPage(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Anterior
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => goToPage(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Siguiente
-        </Button>
+    <div>
+      <div className="container mx-auto">
+        <h1 className="text-4xl font-bold mb-4">Preguntas</h1>
+        <p className="text-lg mb-4">
+          Página {currentPage} de {totalPages}
+        </p>
+        <div className="m-5">
+          <button
+            onClick={handleCreateQuestion}
+            className="text-white font-bold py-2 px-4 rounded"
+            style={{ backgroundColor: "#2c3e50" }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#465669")}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = "#2c3e50")}
+          >
+            Nuevo
+          </button>
+        </div>
+        <QuestionForm
+          isModalOpen={isModalOpen}
+          handleCancel={handleCancel}
+          newQuestion={newQuestion}
+          setNewQuestion={setNewQuestion}
+          isEditing={isEditing}
+          handleOptionChange={handleOptionChange}
+          createOrUpdateQuestion={createOrUpdateQuestion}
+        />
+        <QuestionTable
+          questions={questions}
+          handleEditQuestion={handleEditQuestion}
+          handleDeleteQuestion={handleDeleteConfirmation}
+        />
+        <DeleteConfirmationModal
+          open={deleteModalOpen}
+          onClose={() => setDeleteModalOpen(false)}
+          onDelete={() => handleDeleteQuestion(questionToDeleteId)}
+        />
+        <div className="flex justify-center mt-4">
+          <button
+            onClick={() => goToPage(currentPage - 1)}
+            disabled={currentPage === 1 || totalPages === 0}
+            className={` text-white font-bold py-2 px-4 rounded mt-2 flex-1 ${
+              currentPage === 1 || totalPages === 0
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-900 hover:bg-blue-800"
+            }`}
+          >
+            Anterior
+          </button>
+          <button
+            onClick={() => goToPage(currentPage + 1)}
+            disabled={currentPage === totalPages || totalPages === 0 || currentPage >= totalPages}
+            className={` text-white font-bold py-2 px-4 rounded mt-2 flex-1 ${
+              currentPage === totalPages || totalPages === 0 || currentPage >= totalPages
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-900 hover:bg-blue-800"
+            }`}
+          >
+            Siguiente
+          </button>
+        </div>
       </div>
-    </Container>
+    </div>
   );
 };
 
