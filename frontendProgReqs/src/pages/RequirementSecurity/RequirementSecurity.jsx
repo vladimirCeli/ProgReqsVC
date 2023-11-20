@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Button, Typography, Snackbar, Alert, Container } from "@mui/material";
 import { useParams } from "react-router-dom";
 
 import {
@@ -12,8 +11,10 @@ import {
 import RequirementSModal from "../../components/RequirementSecurity/RequirementSForm";
 import RequirementSTable from "../../components/RequirementSecurity/RequirementSTable";
 import DeleteConfirmationModal from "../../components/Modal/DeleteConfirmationModal";
+import useToast from "../../hooks/useToast";
 
 const RequirementSecurity = () => {
+  const { toast } = useToast();
   const [Subcategorie, setSubcategorie] = useState("");
   const [requirementsecurity, setrequirementsecurity] = useState([]);
   const [newRequirementSecurity, setnewRequirementSecurity] = useState({
@@ -27,10 +28,6 @@ const RequirementSecurity = () => {
     useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [color, setColor] = useState(null);
-  const [message, setMessage] = useState(null);
-
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [RequiremenSToDeleteId, setRequirementSToDeleteId] = useState(null);
 
@@ -97,17 +94,13 @@ const RequirementSecurity = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setMessage(data.success);
-        setColor("success");
-        setSnackbarOpen(true);
+        toast.success(data.success);
         setIsFormVisible(false);
         fetchRequirementSecurity();
         resetForm();
       } else {
         const data = await response.json();
-        setMessage(data.error);
-        setColor("error");
-        setSnackbarOpen(true);
+        toast.error(data.error);
         setIsFormVisible(false);
         fetchRequirementSecurity();
         resetForm();
@@ -132,18 +125,14 @@ const RequirementSecurity = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setMessage(data.success);
-        setColor("success");
-        setSnackbarOpen(true);
+        toast.success(data.success);
         setIsFormVisible(false);
         fetchRequirementSecurity();
         resetForm();
         setEditingRequirementSecurityId(null);
       } else {
         const data = await response.json();
-        setMessage(data.error);
-        setColor("error");
-        setSnackbarOpen(true);
+        toast.error(data.error);
         setIsFormVisible(false);
         fetchRequirementSecurity();
         resetForm();
@@ -184,15 +173,11 @@ const RequirementSecurity = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        setMessage(data.success);
-        setColor("success");
-        setSnackbarOpen(true);
+        toast.success(data.success);
         setDeleteModalOpen(false);
       } else {
         const data = await response.json();
-        setMessage(data.error);
-        setColor("error");
-        setSnackbarOpen(true);
+        toast.error(data.error);
         setDeleteModalOpen(false);
       }
       fetchRequirementSecurity();
@@ -213,23 +198,23 @@ const RequirementSecurity = () => {
     setIsEditing(false);
   };
 
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  };
-
   return (
-    <Container maxWidth="lg" style={{ marginTop: "20px" }}>
-      <Typography variant="h4" component="h2" gutterBottom>
-        Requerimientos de la Subcategoria: {Subcategorie || "Cargando..."}
-      </Typography>
-      <Button
-        variant="contained"
+    <div>
+    <div className="container mx-auto">
+    <h1 className="text-4xl font-bold mb-4">
+        Requisitos de la Subcategoria: {Subcategorie || "Cargando..."}
+      </h1>
+      <div className="m-5">
+      <button
+        className="text-white font-bold py-2 px-4 rounded"
+        style={{ backgroundColor: "#2c3e50" }}
+        onMouseOver={(e) => (e.target.style.backgroundColor = "#465669")}
+        onMouseLeave={(e) => (e.target.style.backgroundColor = "#2c3e50")}
         onClick={handleCreateRequirementSecurity}
-        sx={{ mb: 2 }}
       >
-        Crear nuevo requerimiento
-      </Button>
-
+        Nuevo Requisito
+      </button>
+      </div>
       <RequirementSModal
         isFormVisible={isFormVisible}
         handleCancel={handleCancel}
@@ -238,16 +223,6 @@ const RequirementSecurity = () => {
         createOrUpdateRequirementSecurity={createOrUpdateRequirementSecurity}
         isEditing={isEditing}
       />
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000} // Adjust as needed
-        onClose={handleCloseSnackbar}
-      >
-        <Alert severity={color} onClose={handleCloseSnackbar}>
-          {message}
-        </Alert>
-      </Snackbar>
 
       <RequirementSTable
         requirementsecurity={requirementsecurity}
@@ -260,7 +235,8 @@ const RequirementSecurity = () => {
         onClose={() => setDeleteModalOpen(false)}
         onDelete={() => handleDeleteRequirementSecurity(RequiremenSToDeleteId)}
       />
-    </Container>
+    </div>
+    </div>
   );
 };
 

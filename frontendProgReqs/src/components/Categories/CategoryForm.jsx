@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { QueueListIcon } from "@heroicons/react/24/outline";
+import { TagIcon } from "@heroicons/react/24/outline";
 
 import SelectItems from "../SelectOpt";
 
@@ -51,7 +51,7 @@ const CategoryModal = ({
                 <div className="bg-white px-6 pb-6 pt-8 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start sm:mx-4">
                     <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-indigo-100 sm:mx-0 sm:h-10 sm:w-10">
-                      <QueueListIcon
+                      <TagIcon
                         className="h-6 w-6 text-indigo-950"
                         aria-hidden="true"
                       />

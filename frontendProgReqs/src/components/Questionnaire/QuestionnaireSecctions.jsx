@@ -14,7 +14,7 @@ const sections = [
   },
   {
     id: 2,
-    title: "Practicas",
+    title: "Prácticas",
     route: "/subsections",
     color: "#2196f3",
     icon: <QueueListIcon 

@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { Button, Typography, Container, Snackbar, Alert } from "@mui/material";
-
 import useAuth from "../../Hooks/useAuth";
 import getPerson from "../../components/RequireIdentify";
 import CategorySecurityModal from "../../components/CategorieSecurity/CategorySecurityForm";
@@ -10,10 +8,11 @@ import {
   categoriessecuritybyidApi,
 } from "../../Services/Fetch";
 import DeleteConfirmationModal from "../../Components/Modal/DeleteConfirmationModal";
-
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import useToast from "../../hooks/useToast";
 
 const Categoriesecurity = () => {
+  const { toast } = useToast();
   const { auth } = useAuth();
   const [user, setUser] = useState(null);
   const [categoriesecurity, setcategoriesecurity] = useState([]);
@@ -24,9 +23,6 @@ const Categoriesecurity = () => {
     useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [color, setColor] = useState(null);
-  const [message, setMessage] = useState(null);
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [categorieToDeleteId, setCategorieToDeleteId] = useState(null);
@@ -94,17 +90,13 @@ const Categoriesecurity = () => {
 
         if (res.ok) {
           const data = await res.json();
-          setMessage(data.success);
-          setColor("success");
-          setSnackbarOpen(true);
+          toast.success(data.success);
           setIsFormVisible(false);
           fetchcategoriesecurity();
           resetForm();
         } else {
           const data = await res.json();
-          setMessage(data.error);
-          setColor("error");
-          setSnackbarOpen(true);
+          toast.error(data.error);
           setIsFormVisible(false);
           fetchcategoriesecurity();
           resetForm();
@@ -130,18 +122,14 @@ const Categoriesecurity = () => {
 
       if (res.ok) {
         const data = await res.json();
-        setMessage(data.success);
-        setColor("success");
-        setSnackbarOpen(true);
+        toast.success(data.success);
         setIsFormVisible(false);
         fetchcategoriesecurity();
         resetForm();
         setEditingcategoriesecurityId(null);
       } else {
         const data = await res.json();
-        setMessage(data.error);
-        setColor("error");
-        setSnackbarOpen(true);
+        toast.error(data.error);
         setIsFormVisible(false);
         fetchcategoriesecurity();
         resetForm();
@@ -186,15 +174,11 @@ const Categoriesecurity = () => {
       });
       if (res.ok) {
         const data = await res.json();
-        setMessage(data.success);
-        setColor("success");
-        setSnackbarOpen(true);
+        toast.success(data.success);
         setDeleteModalOpen(false);
       } else {
         const data = await res.json();
-        setMessage(data.error);
-        setColor("error");
-        setSnackbarOpen(true);
+        toast.error(data.error);
         setDeleteModalOpen(false);
       }
 
@@ -212,55 +196,44 @@ const Categoriesecurity = () => {
     setIsEditing(false);
   };
 
-  const handleCloseSnackbar = () => {
-    setSnackbarOpen(false);
-  };
-
   return (
-    <Container maxWidth="lg" style={{ marginTop: "20px" }}>
-      <Typography variant="h4" component="h1" align="center" gutterBottom>
-        Categorias de ASVS
-      </Typography>
-      <Button
-        variant="contained"
-        disabled={isFormVisible}
-        onClick={handleCreatecategoriesecurity}
-      >
-        Crear
-      </Button>
+    <div>
+      <div className="container mx-auto">
+        <h1 className="text-4xl font-bold mb-4">Categorias de ASVS</h1>
+        <div className="m-5">
+          <button
+            className="text-white font-bold py-2 px-4 rounded"
+            style={{ backgroundColor: "#2c3e50" }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = "#465669")}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = "#2c3e50")}
+            onClick={handleCreatecategoriesecurity}
+          >
+            Nueva Categoria
+          </button>
+        </div>
+        <CategorySecurityModal
+          isFormVisible={isFormVisible}
+          handleCancel={handleCancel}
+          newCategorieSecurity={newCategorieSecurity}
+          setnewCategorieSecurity={setnewCategorieSecurity}
+          isEditing={isEditing}
+          createOrUpdateQuestion={createOrUpdateQuestion}
+        />
 
-      <CategorySecurityModal
-        isFormVisible={isFormVisible}
-        handleCancel={handleCancel}
-        newCategorieSecurity={newCategorieSecurity}
-        setnewCategorieSecurity={setnewCategorieSecurity}
-        isEditing={isEditing}
-        createOrUpdateQuestion={createOrUpdateQuestion}
-      />
+        <CategorySecurityTable
+          categoriesecurity={categoriesecurity}
+          handleEditcategoriesecurity={handleEditcategoriesecurity}
+          handleDeletecategoriesecurity={handleDeleteConfirmation}
+          navigate={navigate}
+        />
 
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={4000} // Adjust as needed
-        onClose={handleCloseSnackbar}
-      >
-        <Alert severity={color} onClose={handleCloseSnackbar}>
-          {message}
-        </Alert>
-      </Snackbar>
-
-      <CategorySecurityTable
-        categoriesecurity={categoriesecurity}
-        handleEditcategoriesecurity={handleEditcategoriesecurity}
-        handleDeletecategoriesecurity={handleDeleteConfirmation}
-        navigate={navigate}
-      />
-
-      <DeleteConfirmationModal
-        open={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        onDelete={() => handleDeletecategoriesecurity(categorieToDeleteId)}
-      />
-    </Container>
+        <DeleteConfirmationModal
+          open={deleteModalOpen}
+          onClose={() => setDeleteModalOpen(false)}
+          onDelete={() => handleDeletecategoriesecurity(categorieToDeleteId)}
+        />
+      </div>
+    </div>
   );
 };
 

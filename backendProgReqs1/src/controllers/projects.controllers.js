@@ -42,10 +42,12 @@ const getProjectWithProgress = async (req, res) => {
       where: { project_id: projectId },
     });
 
+    const totalRequirements = requirements.length;
+
     if (requirements.length === 0) {
       return res
         .status(404)
-        .json({ message: "No existen requerimientos para este proyecto" });
+        .json({ message: "No existen requerimientos para este proyecto", totalRequirements: null });
     }
 
     const tasks = await Task.findAll({
@@ -66,7 +68,7 @@ const getProjectWithProgress = async (req, res) => {
     console.log("tareas completadas" + completedTasks);
     const progress = parseFloat((completedTasks / totalTasks) * 100).toFixed(2);
     console.log("progreso: " + progress);
-    res.status(200).json(progress);
+    res.status(200).json({ progress, totalRequirements, totalTasks});
   } catch (error) {
     console.error("Error al obtener el proyecto con progreso:", error);
     res.status(500).json({ message: "Error interno del servidor" });

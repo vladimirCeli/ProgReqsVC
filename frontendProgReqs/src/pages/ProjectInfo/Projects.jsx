@@ -14,6 +14,7 @@ import {
   projectsbyprogressid,
 } from "../../Services/Fetch";
 
+import ProjectsSteps from "../../components/ProjectInfo/ProjectsSteps";
 import ProjectsQuestionnaires from "../../components/ProjectInfo/ProjectsQuestionnaires";
 import ProjectsInfo from "../../components/ProjectInfo/ProjectsInfo";
 import RequirementsProjects from "../../components/ProjectInfo/ProjectsRequirements";
@@ -275,12 +276,19 @@ export default function Projects() {
     try {
       const response = await fetch(projectsbyprogressid + params.id);
       const data = await response.json();
-      const convertedNumber = parseFloat(data);
-      setProjectProgress(convertedNumber);
+  
+      if (data && data.progress !== undefined) {
+        const convertedNumber = parseFloat(data.progress);
+        console.log("convertedNumber", convertedNumber);
+        setProjectProgress(convertedNumber);
+      } else {
+        console.error("Formato de respuesta incorrecto:", data);
+      }
     } catch (error) {
       console.error("Error al obtener el progreso del proyecto:", error);
     }
   };
+  
 
   useEffect(() => {
     const loadQuestionnaire = async () => {
@@ -435,6 +443,12 @@ export default function Projects() {
   return (
     <div className="">
       <div className="container mx-auto">
+
+        <ProjectsSteps
+          beforeImage={"../../../assets/mdz1.png"} 
+          afterImage={"../../../assets/mdz2.png"}
+        />
+
         <ProjectsQuestionnaires
           questionnaires={questionnaires}
           paramsId={params.id}
@@ -448,10 +462,10 @@ export default function Projects() {
                   <div className="relative pt-1">
                     <div className="flex mb-2 items-center justify-between">
                       <div>
-                        <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-teal-600 bg-teal-200">
+                        <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-indigo-900 bg-indigo-200">
                           {typeof projectProgress === "number" &&
                           !isNaN(projectProgress) ? (
-                            <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-teal-600 bg-teal-200">
+                            <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-indigo-900 bg-indigo-200">
                               {projectProgress.toFixed(2)}%
                             </span>
                           ) : (
@@ -462,16 +476,16 @@ export default function Projects() {
                         </span>
                       </div>
                       <div className="text-right">
-                        <span className="text-xs font-semibold inline-block text-teal-600">
+                        <span className="text-xs font-semibold inline-block text-indigo-900">
                           {projectProgress === 100 ? "Completo" : "En progreso"}
                         </span>
                       </div>
                     </div>
                     <div className="flex">
-                      <div className="flex-grow overflow-hidden h-2 mb-4 text-xs flex rounded bg-teal-200">
+                      <div className="flex-grow overflow-hidden h-2 mb-4 text-xs flex rounded bg-indigo-200">
                         <div
                           style={{ width: `${projectProgress}%` }}
-                          className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-teal-500"
+                          className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-indigo-900"
                         ></div>
                       </div>
                     </div>
