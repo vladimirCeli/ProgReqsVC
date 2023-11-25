@@ -1,6 +1,6 @@
-const baseURl = 'http://localhost:4000';
+const baseURl = 'https://progreqsvc.onrender.com';
 
-export const baseURLapi = 'http://localhost:4000/';
+export const baseURLapi = 'https://progreqsvc.onrender.com/';
 
 export const register = `${baseURl}/register`;
 
