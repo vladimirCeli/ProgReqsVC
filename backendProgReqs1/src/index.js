@@ -3,6 +3,7 @@ const compression = require("compression");
 const app = express()
 app.use(compression());
 const apppractices = express()
+const PORT = process.env.PORT || 4000;
 const PORTPRACTICES = 9000
 const morgan = require('morgan')
 const cors = require('cors')
@@ -97,6 +98,6 @@ async function main() {
 }
 main();
 
-app.listen(4000, () => {
+app.listen(PORT, () => {
     console.log('Server On')
 })
