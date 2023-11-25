@@ -9,7 +9,9 @@ const corsOptions = {
         }
     },
     credentials: true,
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200,
+    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+    methods: 'GET, POST, PUT, DELETE, UPDATE'
 }
 
 module.exports = corsOptions;
