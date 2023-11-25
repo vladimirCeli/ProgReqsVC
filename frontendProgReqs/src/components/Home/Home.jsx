@@ -53,7 +53,7 @@ const Home = () => {
               <div className="absolute top-0 right-0 sm:top-9 sm:right-9 md:top-0 md:right-0 lg:top-56 lg:right-56 w-30 h-30 sm:w-72 sm:h-72 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob text-animation"></div>
               <div className="">
                 <img
-                src="../../assets/logop.png"
+                src="../../../img/logop.png"
                   width="460"
                   height="445"
                   className="w-full h-full s-animation scale-up relative z-10  logo-animation"
@@ -71,7 +71,7 @@ const Home = () => {
               Los estudiantes de computación confían en nosotros
             </div>
             <div className="flex flex-wrap justify-center md:justify-around">
-              <img src="../../assets/CIC.png" alt="" width={247} height={247} />
+              <img src="../../../img/cic.png" alt="" width={247} height={247} />
             </div>
           </div>
         </Container>
