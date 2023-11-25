@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import useAuth from "../../Hooks/useAuth";
+import useAuth from "../../hooks/useAuth";
 import getPerson from "../../components/RequireIdentify";
 import CategorySecurityModal from "../../components/CategorieSecurity/CategorySecurityForm";
 import CategorySecurityTable from "../../components/CategorieSecurity/CategorySecurityTable";
@@ -7,7 +7,7 @@ import {
   categoriessecurityApi,
   categoriessecuritybyidApi,
 } from "../../Services/Fetch";
-import DeleteConfirmationModal from "../../Components/Modal/DeleteConfirmationModal";
+import DeleteConfirmationModal from "../../components/Modal/DeleteConfirmationModal";
 import { useNavigate } from "react-router-dom";
 import useToast from "../../hooks/useToast";
 

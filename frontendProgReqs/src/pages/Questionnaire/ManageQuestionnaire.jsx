@@ -1,6 +1,6 @@
 import {
   QuestionnairesSection,
-} from "../../Components/Questionnaire/QuestionnaireSecctions";
+} from "../../components/Questionnaire/QuestionnaireSecctions";
 import QuestionnairesList from "../../components/Questionnaire/questionnairesList";
 
 const QuestionnairesManager = () => {
