@@ -145,7 +145,7 @@ const requestPasswordReset = async (req, res) => {
       subject: "Restablecer contraseña",
       html: `<h1>Restablecer contraseña</h1>
       <h3>Haga clic en el siguiente enlace para restablecer su contraseña:</h3>
-      <a href="https://progresqscic.onrender.com/${resetToken}">Restablecer contraseña</a>
+      <a href="https://progresqscic.onrender.com/reset-password/${resetToken}">Restablecer contraseña</a>
       `,
     };
 
