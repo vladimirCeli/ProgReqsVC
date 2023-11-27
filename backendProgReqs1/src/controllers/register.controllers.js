@@ -29,7 +29,7 @@ const sendConfirmationEmail = async (email, token) => {
       subject: "Confirmación de cuenta",
       html: `<h1>Por favor, confirma tu cuenta</h1>
       <h3>Para confirmar tu cuenta, haz click en el siguiente enlace</h3>
-      <a href="${process.env.REACT_FRONT}/confirm/${token}">Confirmar cuenta</a>
+      <a href="https://progresqscic.onrender.com/confirm/${token}">Confirmar cuenta</a>
       `,
   }
    const info = await transporter.sendMail(mailOptions)
