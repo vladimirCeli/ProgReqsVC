@@ -5,11 +5,14 @@ import { Typography, Paper, Container } from "@mui/material";
 import { confirmEmailApi } from "../Services/Fetch";
 
 export default function Email() {
-  const { confirmationToken } = useParams();
+  const confirmationToken = useParams();
+
   const [confirmationMessage, setConfirmationMessage] = useState("");
 
   useEffect(() => {
-    fetch(confirmEmailApi + confirmationToken, {
+    console.log("este es el confirmate token")
+  console.log(confirmationToken.confirmationToken)
+    fetch(confirmEmailApi + confirmationToken.confirmationToken, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
