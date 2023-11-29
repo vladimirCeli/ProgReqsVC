@@ -7,6 +7,7 @@ const allowedOrigins = [
     'https://progreqsvc.onrender.com',
     'https://progreqs.onrender.com',
     'https://progresqscic.onrender.com',
+    'https://proud-sand-010f3e510.4.azurestaticapps.net',
 ];
 
 module.exports = allowedOrigins;
