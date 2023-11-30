@@ -445,8 +445,8 @@ export default function Projects() {
       <div className="container mx-auto">
 
         <ProjectsSteps
-          beforeImage={"../../../assets/mdz1.png"} 
-          afterImage={"../../../assets/mdz2.png"}
+          beforeImage={"../../../img/mdz1.png"} 
+          afterImage={"../../../img/mdz2.png"}
         />
 
         <ProjectsQuestionnaires
