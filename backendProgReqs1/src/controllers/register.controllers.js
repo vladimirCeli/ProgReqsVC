@@ -15,13 +15,18 @@ const transporter = nodemailer.createTransport({
       pass: "vapdncmehudtbbze",
   },
 })
-
+/*
 const generateUniqueToken = () => {
   const sha256 = require('crypto').createHash('sha256');
   return sha256.update(Math.random().toString()).digest('hex');
 }
+*/
+const generateUniqueToken = () => {
+  const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return code;
+}
 
-const sendConfirmationEmail = async (email, token) => {
+const sendConfirmationEmail = async (email, code) => {
   try {
   const mailOptions = {
       from: "vladimir.celi@unl.edu.ec",
@@ -29,7 +34,7 @@ const sendConfirmationEmail = async (email, token) => {
       subject: "Confirmación de cuenta",
       html: `<h1>Por favor, confirma tu cuenta</h1>
       <h3>Para confirmar tu cuenta, haz click en el siguiente enlace</h3>
-      <a href="https://progresqscic.onrender.com/confirm/${token}">Confirmar cuenta</a>
+      <p>Código de confirmación: ${code}</p>
       `,
   }
    const info = await transporter.sendMail(mailOptions)
@@ -100,7 +105,7 @@ passwordSchema
   };
   
   const confirmEmail = async (req, res) => {
-    const { confirmationToken } = req.params;
+    const { confirmationToken } = req.body;
   
     try {
       const person = await Person.findOne({ where: { confirmation_token: confirmationToken } });
@@ -115,7 +120,7 @@ passwordSchema
   
        person.update({ confirmed: true });
   
-      return res.json({ message: "Su correo electrónico ha sido confirmado con éxito" });
+      return res.status(200).json({ message: "Su correo electrónico ha sido confirmado con éxito" });
     } catch (error) {
       return res.status(500).json({ message: "Error al confirmar el correo electrónico" });
     }

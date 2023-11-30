@@ -3,6 +3,6 @@ const { confirmEmail, register } = require('../controllers/register.controllers'
 const router = Router()
 
 router.post('/register', register )
-router.get('/confirm/:confirmationToken', confirmEmail )
+router.post('/confirm', confirmEmail )
 
 module.exports = router
