@@ -61,6 +61,10 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '20.x'
+
+      - name: 'Change directory to backend folder'
+        run: cd backendProgReqs1
+
       - name: 'Set up Environment Variables'
         run: |
           echo "DB_DIALECT=${{ secrets.DB_DIALECT }}" >> $GITHUB_ENV
