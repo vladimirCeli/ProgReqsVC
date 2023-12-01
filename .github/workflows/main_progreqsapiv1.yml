@@ -60,6 +60,7 @@ jobs:
       - name: Start Node.js server
         run: |
           cd backendProgReqs1
+          npm install
           npm run start
         env:
           DB_DIALECT: ${{ secrets.DB_DIALECT }}
