@@ -28,7 +28,7 @@ jobs:
           npm run test --if-present
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./backendProgReqs1/* -r
+        run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -52,13 +52,6 @@ jobs:
       - name: Unzip artifact for deployment
         run: unzip release.zip
       
-      - name: 'Convert DB_PORT to integer'
-        run: |
-          DB_PORT=${{ secrets.DB_PORT }}
-          DB_PORT_INT=$((10#${DB_PORT}))
-          echo "DB_PORT as integer: $DB_PORT_INT"
-        id: convert-db-port
-
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
@@ -66,14 +59,4 @@ jobs:
           app-name: 'progreqsapiv1'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4743CD9629F540ABB540803A9313AEA3 }}
-        env:
-          DB_DIALECT: ${{ secrets.DB_DIALECT }}
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_PORT: ${{ steps.convert-db-port.outputs.DB_PORT_INT }} # Usando el valor entero
-          DB_USER: ${{ secrets.DB_USER }}
-          LINKMONGO: ${{ secrets.LINKMONGO }}
-          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
-          REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_62774301BCD446F9886D5979045FBC31 }}
