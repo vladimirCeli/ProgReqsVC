@@ -60,7 +60,7 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4743CD9629F540ABB540803A9313AEA3 }}
-           env:
+          env: |
             DB_DIALECT: ${{ secrets.DB_DIALECT }}
             DB_HOST: ${{ secrets.DB_HOST }}
             DB_NAME: ${{ secrets.DB_NAME }}
