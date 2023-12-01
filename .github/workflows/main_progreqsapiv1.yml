@@ -63,7 +63,8 @@ jobs:
           node-version: '20.x'
 
       - name: 'Change directory to backend folder'
-        run: cd backendProgReqs1
+        run: cd backendProgReqs1 && ls -la
+
 
       - name: 'Set up Environment Variables'
         run: |
