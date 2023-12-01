@@ -57,18 +57,17 @@ jobs:
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4743CD9629F540ABB540803A9313AEA3 }}
           
-        - name: Start Node.js server
-          run: |
-            cd backendProgReqs1
-            npm run start
-          env:
-            DB_DIALECT: ${{ secrets.DB_DIALECT }}
-            DB_HOST: ${{ secrets.DB_HOST }}
-            DB_NAME: ${{ secrets.DB_NAME }}
-            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-            DB_PORT: ${{ secrets.DB_PORT }}
-            DB_USER: ${{ secrets.DB_USER }}
-            LINKMONGO: ${{ secrets.LINKMONGO }}
-            ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
-            REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
-            
+      - name: Start Node.js server
+        run: |
+          cd backendProgReqs1
+          npm run start
+        env:
+          DB_DIALECT: ${{ secrets.DB_DIALECT }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          LINKMONGO: ${{ secrets.LINKMONGO }}
+          ACCESS_TOKEN_SECRET: ${{ secrets.ACCESS_TOKEN_SECRET }}
+          REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
